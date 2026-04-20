@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GADLP · Dashboard CAIF 2014–2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{
+  --R:#c71e1d;--Rdk:#8f1514;--Rlt:#e84948;--Rpale:#fdecea;
+  --bg:#f4efe4;--bg2:#ede6d5;--bg3:#e5dac8;--bgd:#d5c9b2;
+  --ink:#3a2a18;--ink2:#6b4e36;--mute:#8e7660;--faint:#b5a28e;
+  --gold:#9e7500;--goldlt:#c49a1a;--goldpale:#fdf1cc;
+  --grn:#1d5938;--grnlt:#2a8454;--grnpale:#e2f3ea;
+  --blu:#183d6a;--blult:#2558a4;--blupale:#e2ecf7;
+  --tel:#185252;--tellt:#287878;--telpale:#e2f0f0;
+  --pur:#4a2a6e;--purlt:#7040a0;--purpale:#ede2f7;
+  --wht:#fdfaf3;
+  --sh:0 2px 10px rgba(58,42,24,.08);--shh:0 6px 22px rgba(58,42,24,.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'IBM Plex Sans',sans-serif;color:var(--ink);min-height:100vh;font-size:14px}
+/* TOPBAR */
+.topbar{background:var(--R);padding:0 36px;display:flex;align-items:stretch;min-height:64px;position:relative;overflow:hidden}
+.topbar::after{content:'GADLP';position:absolute;right:-4px;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:900;color:rgba(255,255,255,.05);pointer-events:none;letter-spacing:-2px}
+.tb-l{display:flex;flex-direction:column;justify-content:center;flex:1}
+.tb-l h1{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;color:#fff;letter-spacing:-.3px;line-height:1.15}
+.tb-l p{font-size:.68rem;color:rgba(255,255,255,.58);letter-spacing:1.3px;text-transform:uppercase;margin-top:3px}
+.tb-r{display:flex;align-items:center}
+.ts{text-align:center;color:#fff;padding:0 16px;border-left:1px solid rgba(255,255,255,.18)}
+.ts-v{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;line-height:1}
+.ts-l{font-size:.6rem;letter-spacing:.8px;text-transform:uppercase;opacity:.55;margin-top:2px}
+/* NAV */
+.nav{background:var(--ink);display:flex;padding:0 36px;overflow-x:auto;gap:0;border-bottom:1px solid rgba(255,255,255,.06)}
+.nt{background:none;border:none;color:rgba(255,255,255,.42);font-family:'IBM Plex Sans',sans-serif;font-size:.73rem;font-weight:500;padding:12px 15px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.1px}
+.nt:hover{color:rgba(255,255,255,.78)}
+.nt.active{color:#fff;border-bottom-color:var(--R);font-weight:700}
+/* YEAR BAR */
+.ybar{background:var(--bg2);border-bottom:1px solid var(--bgd);padding:8px 36px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.yl{font-size:.63rem;letter-spacing:1.3px;text-transform:uppercase;color:var(--mute);margin-right:6px;white-space:nowrap;font-weight:700;flex-shrink:0}
+.yb{background:var(--wht);border:1px solid var(--bgd);color:var(--mute);border-radius:4px;padding:3px 9px;font-size:.7rem;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:500;transition:all .15s;white-space:nowrap}
+.yb:hover{border-color:var(--R);color:var(--R)}
+.yb.active{background:var(--R);border-color:var(--R);color:#fff;font-weight:700}
+/* MAIN */
+.main{max-width:1500px;margin:0 auto;padding:24px 36px 56px}
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:10px;margin:28px 0 13px;padding-bottom:9px;border-bottom:1px solid var(--bg3)}
+.sh .num{background:var(--R);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.sh h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink)}
+.sh .note{font-size:.67rem;color:var(--mute);margin-left:auto;font-style:italic;white-space:nowrap}
+/* GRIDS */
+.g1{display:grid;grid-template-columns:1fr;gap:13px;margin-bottom:13px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:13px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:13px}
+.g24{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:13px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:13px;margin-bottom:13px}
+/* CARD */
+.card{background:var(--wht);border-radius:9px;padding:17px 19px 15px;box-shadow:var(--sh);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shh)}
+.ct{font-family:'Playfair Display',serif;font-size:.86rem;font-weight:700;color:var(--ink);margin-bottom:1px}
+.cs{font-size:.64rem;color:var(--mute);margin-bottom:11px}
+.cw{position:relative}
+.h140{height:140px}.h170{height:170px}.h200{height:200px}.h230{height:230px}.h260{height:260px}.h300{height:300px}.h340{height:340px}
+/* KPI BAND */
+.kb{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:13px}
+.kpi{background:var(--wht);border-radius:9px;padding:13px 15px 11px;border-left:4px solid var(--bg3);box-shadow:var(--sh);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;right:-8px;top:-8px;width:50px;height:50px;border-radius:50%;opacity:.07}
+.kpi.r{border-left-color:var(--R)}.kpi.r::before{background:var(--R)}
+.kpi.g{border-left-color:var(--grn)}.kpi.g::before{background:var(--grn)}
+.kpi.b{border-left-color:var(--blu)}.kpi.b::before{background:var(--blu)}
+.kpi.o{border-left-color:var(--gold)}.kpi.o::before{background:var(--gold)}
+.kpi.t{border-left-color:var(--tel)}.kpi.t::before{background:var(--tel)}
+.kpi.p{border-left-color:var(--pur)}.kpi.p::before{background:var(--pur)}
+.kl{font-size:.59rem;letter-spacing:1.1px;text-transform:uppercase;color:var(--mute);font-weight:700;margin-bottom:4px}
+.kv{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;line-height:1;color:var(--ink)}
+.kv.neg{color:var(--R)}.kv.pos{color:var(--grn)}
+.km{font-size:.62rem;color:var(--mute);margin-top:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.dl{font-size:.65rem;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap}
+.dl.p{background:var(--grnpale);color:var(--grn)}.dl.n{background:var(--Rpale);color:var(--R)}
+/* INSIGHT */
+.ins{background:linear-gradient(135deg,var(--Rpale),#fff8f8);border-left:4px solid var(--R);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:13px;font-size:.75rem;color:var(--ink);line-height:1.6}
+.ins strong{color:var(--R)}
+.ins.g{background:linear-gradient(135deg,var(--grnpale),#f7fffb);border-left-color:var(--grn)}.ins.g strong{color:var(--grn)}
+.ins.o{background:linear-gradient(135deg,var(--goldpale),#fffef7);border-left-color:var(--gold)}.ins.o strong{color:var(--gold)}
+.ins.b{background:linear-gradient(135deg,var(--blupale),#f7faff);border-left-color:var(--blu)}.ins.b strong{color:var(--blu)}
+/* TABLES */
+.dtbl{width:100%;border-collapse:collapse;font-size:.73rem}
+.dtbl th{background:var(--ink);color:rgba(255,255,255,.8);padding:7px 9px;font-size:.6rem;letter-spacing:.8px;text-transform:uppercase;border-bottom:2px solid var(--R);text-align:right;white-space:nowrap}
+.dtbl th:first-child{text-align:left;min-width:180px}
+.dtbl td{padding:5px 9px;border-bottom:1px solid var(--bg3);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink2)}
+.dtbl td:first-child{text-align:left;color:var(--ink)}
+.dtbl tr.grp td{background:var(--bg2);font-weight:700;color:var(--ink);border-top:2px solid var(--bg3)}
+.dtbl tr.sub td{color:var(--ink2)}.dtbl tr.sub td:first-child{padding-left:18px;color:var(--ink2)}
+.dtbl tr.sub2 td{color:var(--mute)}.dtbl tr.sub2 td:first-child{padding-left:32px;font-size:.7rem}
+.dtbl tr.total td{background:var(--ink);color:#fff;font-weight:700}
+.dtbl tr.total td:first-child{color:#ffd080}
+.dtbl tr.accent td{background:var(--Rpale);color:var(--R);font-weight:700}
+.dtbl tr.accent td:first-child{color:var(--Rdk)}
+.dtbl tr.accent-b td{background:var(--blupale);color:var(--blu);font-weight:700}
+.dtbl tr.accent-g td{background:var(--grnpale);color:var(--grn);font-weight:700}
+.dtbl tr:hover:not(.total):not(.accent) td{background:var(--bg)}
+.bdg{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.61rem;font-weight:700}
+.bdg.r{background:var(--Rpale);color:var(--R)}.bdg.g{background:var(--grnpale);color:var(--grn)}
+.bdg.b{background:var(--blupale);color:var(--blu)}.bdg.o{background:var(--goldpale);color:var(--gold)}
+.bdg.t{background:var(--telpale);color:var(--tel)}.bdg.p{background:var(--purpale);color:var(--pur)}
+/* RATIO TABLE */
+.rtbl{width:100%;border-collapse:collapse;font-size:.72rem}
+.rtbl th{background:var(--bg2);color:var(--ink2);font-weight:700;padding:7px 8px;font-size:.59rem;letter-spacing:.7px;text-transform:uppercase;border-bottom:2px solid var(--R);text-align:right;white-space:nowrap;position:sticky;top:0;z-index:2}
+.rtbl th:first-child{text-align:left;min-width:200px;position:sticky;left:0;z-index:3;background:var(--bg2)}
+.rtbl td{padding:5px 8px;border-bottom:1px solid var(--bg3);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rtbl td.lbl{font-weight:700;color:var(--ink);background:var(--bg);text-align:left;position:sticky;left:0;z-index:1;border-right:1px solid var(--bgd)}
+.rtbl tr:hover td{background:var(--bg)}
+.rtbl tr.grp-r td{border-top:2px solid var(--bg3)}
+.h0{background:#d1f0e0;color:#0e3d22;font-weight:700}
+.h1{background:#e8f7ee;color:#1d5938}
+.h2{background:#fdf3cc;color:#7a5a00}
+.h3{background:#fde5cc;color:#8a4000}
+.h4{background:#fbd0cc;color:#8f1514;font-weight:700}
+/* NOTA METODOLÓGICA */
+.nota-met{background:linear-gradient(135deg,#fffbea,#fffff6);border:1px solid var(--goldpale);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-bottom:13px;font-size:.74rem;color:var(--ink);line-height:1.7}
+.nota-met .nm-tit{font-weight:700;color:var(--gold);margin-bottom:5px;font-size:.76rem;display:flex;align-items:center;gap:6px}
+.nota-met .nm-tit::before{content:'▲';font-size:.58rem;opacity:.7}
+.nota-met strong{color:var(--gold)}
+/* PAGE */
+.page{display:none}.page.active{display:block}
+.tscroll{overflow-x:auto;border-radius:8px;-webkit-overflow-scrolling:touch}
+/* FOOTER */
+.footer{background:var(--ink);color:rgba(255,255,255,.35);text-align:center;padding:12px 36px;font-size:.63rem;letter-spacing:.5px}
+/* MINI SPARKLINE CONTAINER */
+.spark-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.spark-bar{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:18px}
+.spark-fill{width:100%;border-radius:2px 2px 0 0;transition:height .3s}
+.spark-yr{font-size:.5rem;color:var(--mute);font-family:'IBM Plex Mono',monospace}
+@media(max-width:900px){.g2,.g3,.g4,.g24,.g13{grid-template-columns:1fr}.main{padding:14px 14px 40px}.topbar,.nav,.ybar{padding-left:14px;padding-right:14px}}
+
+html.dark-mode body{background:#1a1410;color:#f0e8d8}
+html.dark-mode{--bg:#1a1410;--bg2:#221c14;--bg3:#2c2318;--bgd:#3a2e20;--ink:#f0e8d8;--ink2:#c8b89a;--mute:#6b5240;--faint:#6a5a48;--wht:#201810;--sh:0 2px 10px rgba(0,0,0,.4);--shh:0 6px 22px rgba(0,0,0,.6);--Rpale:#2e0a09;--grnpale:#0a1f14;--blupale:#091828;--goldpale:#1e1600;--telpale:#091a1a;--purpale:#150a22}
+html.dark-mode .card{background:#201810}
+html.dark-mode .kpi{background:#201810}
+html.dark-mode .ybar{background:#221c14;border-color:#3a2e20}
+html.dark-mode .yb{background:#2a1f12;border-color:#3a2e20;color:#c8b89a}
+html.dark-mode .yb.active{background:#c71e1d;border-color:#c71e1d;color:#fff}
+html.dark-mode .nav{background:#150e08}
+html.dark-mode .topbar{background:#8f1514}
+html.dark-mode .footer{background:#150e08}
+html.dark-mode .sh h2{color:#f0e8d8}
+html.dark-mode .ct{color:#f0e8d8}
+html.dark-mode .cs{color:#9a8570}
+html.dark-mode .kl{color:#9a8570}
+html.dark-mode .kv{color:#f0e8d8}
+html.dark-mode .km{color:#9a8570}
+html.dark-mode .ins{background:#2e0a09}
+html.dark-mode .ins.g{background:#0a1f14}
+html.dark-mode .ins.o{background:#1e1600}
+html.dark-mode .ins.b{background:#091828}
+html.dark-mode .nota-met{background:#1e1600;border-left-color:#9e7500}
+html.dark-mode .dtbl th{background:#2a1f12;color:rgba(240,232,216,.8)}
+html.dark-mode .dtbl td{border-bottom-color:#2c2318;color:#c8b89a}
+html.dark-mode .dtbl td:first-child{color:#f0e8d8}
+html.dark-mode .dtbl tr.grp td{background:#221c14;color:#f0e8d8}
+html.dark-mode .dtbl tr.total td{background:#2a1f12;color:#ffd080}
+html.dark-mode .dtbl tr:hover:not(.total):not(.accent) td{background:#221c14}
+html.dark-mode .rtbl th{background:#221c14;color:#c8b89a}
+html.dark-mode .rtbl td{border-bottom-color:#2c2318}
+html.dark-mode .rtbl td.lbl{background:#1a1410;color:#f0e8d8}
+html.dark-mode .h0{background:#0a2a18;color:#a0e8c0}
+html.dark-mode .h1{background:#0f1f14;color:#7ac8a0}
+html.dark-mode .h2{background:#1e1a08;color:#d8c060}
+html.dark-mode .h3{background:#2a1408;color:#d89060}
+html.dark-mode .h4{background:#2a0a08;color:#e08080}
+.dark-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:4px 12px;font-size:.65rem;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.dark-toggle:hover{background:rgba(255,255,255,.22)}
+
+.integrity-bar{background:var(--grnpale);border-left:3px solid var(--grn);border-radius:0 6px 6px 0;padding:6px 14px;margin:0 36px 0;font-size:.68rem;color:var(--grn);display:none;align-items:center;gap:8px}
+.integrity-bar.warn{background:var(--Rpale);border-left-color:var(--R);color:var(--R)}
+html.dark-mode .integrity-bar{background:var(--grnpale)}
+html.dark-mode .integrity-bar.warn{background:var(--Rpale)}
+
+.kpi{cursor:default;overflow:hidden}
+.kpi-info{position:absolute;top:8px;right:8px;width:14px;height:14px;border-radius:50%;background:var(--bg3);color:var(--mute);font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:help;z-index:5}
+.kpi-tooltip{position:fixed;background:rgba(24,14,6,.96);color:#fdfaf3;font-size:.68rem;padding:7px 10px;border-radius:6px;border:1px solid var(--R);max-width:220px;line-height:1.55;z-index:9999;pointer-events:none;display:none}
+
+.tb-search{display:flex;align-items:center;gap:6px;padding:0 12px;border-left:1px solid rgba(255,255,255,.18)}
+.tb-search input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:4px;padding:4px 8px;font-size:.68rem;font-family:'IBM Plex Sans',sans-serif;width:140px;outline:none}
+.tb-search input::placeholder{color:rgba(255,255,255,.4)}
+.tb-search input:focus{background:rgba(255,255,255,.18)}
+.search-hit{background:rgba(255,210,80,.35)!important;outline:2px solid #ffd050}
+
+.sortable th{cursor:pointer;user-select:none;padding-right:16px!important;position:relative}
+.sortable th::after{content:'\21C5';position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:.55rem;opacity:.35}
+.sortable th.asc::after{content:'\2191';opacity:.9}
+.sortable th.desc::after{content:'\2193';opacity:.9}
+
+.ann-panel{background:var(--wht);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;margin:6px 36px 0;display:none}
+.ann-panel-tit{font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.ann-row{display:flex;gap:6px;align-items:center;margin-bottom:5px;flex-wrap:wrap}
+.ann-row select,.ann-row input[type=text]{font-size:.7rem;padding:3px 7px;border:1px solid var(--bgd);border-radius:4px;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif}
+.ann-row select{width:80px}
+.ann-row input[type=text]{flex:1;min-width:120px}
+.ann-row input[type=color]{width:28px;height:26px;border:1px solid var(--bgd);border-radius:4px;padding:1px;cursor:pointer}
+.ann-del{background:none;border:none;color:var(--mute);cursor:pointer;font-size:14px;padding:0 4px}
+.ann-del:hover{color:var(--R)}
+.ann-add{font-size:.65rem;padding:3px 10px;background:none;border:1px solid var(--bgd);border-radius:4px;color:var(--mute);cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
+.ann-add:hover{border-color:var(--gold);color:var(--gold)}
+html.dark-mode .ann-panel{background:#201810}
+html.dark-mode .ann-row select,html.dark-mode .ann-row input[type=text]{background:#2a1f12;border-color:#3a2e20;color:#f0e8d8}
+
+.chart-dl{position:absolute;top:4px;right:4px;z-index:10;background:var(--wht);border:0.5px solid var(--bgd);color:var(--mute);border-radius:4px;padding:2px 7px;font-size:.6rem;font-family:'IBM Plex Mono',monospace;cursor:pointer;opacity:0;transition:opacity .15s;line-height:1.6}
+.card:hover .chart-dl{opacity:1}
+.chart-dl:hover{border-color:var(--R);color:var(--R)}
+html.dark-mode .chart-dl{background:#201810;border-color:#3a2e20;color:#9a8570}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-l">
+    <h1>Cuenta Ahorro · Inversión · Financiamiento</h1>
+    <p>Gobierno Autónomo Departamental de La Paz &nbsp;·&nbsp; Bolivianos corrientes &nbsp;·&nbsp; SIGEP 2014–2025</p>
+  </div>
+  <div class="tb-r">
+    <div class="ts"><div class="ts-v">12</div><div class="ts-l">Gestiones</div></div>
+    <div class="ts"><div class="ts-v" id="ts1">—</div><div class="ts-l">Prom. IC (Bs B)</div></div>
+    <div class="ts"><div class="ts-v" id="ts2">—</div><div class="ts-l">Dep. Hidro. 2025</div></div>
+    <div class="ts"><div class="ts-v" id="ts3">—</div><div class="ts-l">Autofinanciam. 2025</div></div>
+      <div class="tb-search"><input type="text" id="searchBox" placeholder="Buscar dato..." oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')clearSearch()"></div>
+  <button class="dark-toggle" onclick="toggleAnnPanel()" id="annBtn" style="margin-left:6px">Anotar</button>
+  <button class="dark-toggle" onclick="toggleDark()" id="darkBtn" style="margin-left:12px">☽ Oscuro</button>
+</div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav">
+  <button class="nt active" onclick="go('resumen')">① Resumen</button>
+  <button class="nt" onclick="go('ingresos')">② Estructura de Ingresos</button>
+  <button class="nt" onclick="go('tgn')">③ TGN &amp; Autonomía Fiscal</button>
+  <button class="nt" onclick="go('hidro')">④ Recursos Naturales</button>
+  <button class="nt" onclick="go('gasto')">⑤ Gasto &amp; Ahorro</button>
+  <button class="nt" onclick="go('deuda')">⑥ Deuda &amp; Financiamiento</button>
+  <button class="nt" onclick="go('ratios')">⑦ Ratios Históricos</button>
+  <button class="nt" onclick="go('deficit')">⑨ Análisis de Déficit</button>
+  <button class="nt" onclick="go('tabla')">⑩ Tabla Completa</button>
+</div>
+
+<div id="integrity-bar" class="integrity-bar"><span id="integrity-msg"></span></div>
+
+<!-- YEAR BAR -->
+<div class="ybar">
+  <span class="yl">Gestión:</span>
+  <button class="yb active" onclick="sy('all')">Serie completa</button>
+  <button class="yb" onclick="sy('2014')">2014</button><button class="yb" onclick="sy('2015')">2015</button>
+  <button class="yb" onclick="sy('2016')">2016</button><button class="yb" onclick="sy('2017')">2017</button>
+  <button class="yb" onclick="sy('2018')">2018</button><button class="yb" onclick="sy('2019')">2019</button>
+  <button class="yb" onclick="sy('2020')">2020</button><button class="yb" onclick="sy('2021')">2021</button>
+  <button class="yb" onclick="sy('2022')">2022</button><button class="yb" onclick="sy('2023')">2023</button>
+  <button class="yb" onclick="sy('2024')">2024</button><button class="yb" onclick="sy('2025')">2025</button>
+</div>
+
+<div id="ann-panel" class="ann-panel"><div class="ann-panel-tit"><span>Anotaciones en graficos</span><button class="ann-add" onclick="addAnnRow()">+ Agregar</button></div><div id="ann-rows"></div></div>
+
+<div class="main">
+
+<!-- ══════════════ RESUMEN ══════════════ -->
+<div class="page active" id="page-resumen">
+  <div class="sh"><span class="num">01</span><h2>Resumen Ejecutivo</h2><span class="note" id="res-note">Serie 2014–2025</span></div>
+  <div class="kb" id="kb-res"></div>
+  <div class="nota-met">
+    <div class="nm-tit">Nota metodológica — Recursos TGN</div>
+    Los recursos del <strong>Tesoro General de la Nación (TGN)</strong> que aparecen en el CAIF del GADLP son transferencias del Gobierno Central que se registran contablemente en las cuentas de la Gobernación, pero <strong>no son de libre disponibilidad para la gestión autónoma</strong>: están destinados principalmente a financiar <strong>Salud (SEDES)</strong> y <strong>SEDEGES</strong>. Para evaluar la verdadera capacidad fiscal propia del GADLP, los indicadores relevantes son <strong>IC sin TGN</strong> y <strong>Recursos Propios</strong>, desarrollados en la pestaña ③.
+  </div>
+  <div class="g24">
+    <div class="card">
+      <div class="ct">Ingresos totales del GADLP por categoría</div>
+      <div class="cs">Ingresos Corrientes + Recursos Capital + Fuentes Financieras (Deuda) · Millones Bs · 2014→2025</div>
+      <div class="cw h300"><canvas id="c-res-stack" role="img" aria-label="Ingresos totales del GADLP por categoría 2014–2025"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct" id="pie-tit">Composición Ingresos Corrientes</div>
+      <div class="cs" id="pie-sub">Año seleccionado</div>
+      <div class="cw h260"><canvas id="c-res-pie" role="img" aria-label="Composición de ingresos corrientes por fuente"></canvas></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="ct">Ahorro Corriente (C = A − B)</div><div class="cs">Millones Bs · verde=ahorro · rojo=desahorro</div><div class="cw h200"><canvas id="c-res-ah" role="img" aria-label="Ahorro corriente anual"></canvas></div></div>
+    <div class="card"><div class="ct">Resultado Financiero Neto (G = C + F)</div><div class="cs">Millones Bs · superávit / déficit</div><div class="cw h200"><canvas id="c-res-res" role="img" aria-label="Resultado financiero neto anual"></canvas></div></div>
+    <div class="card"><div class="ct">Fuentes Financieras vs Aplicaciones</div><div class="cs">Millones Bs · I vs J</div><div class="cw h200"><canvas id="c-res-ij" role="img" aria-label="Fuentes financieras vs aplicaciones"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ══════════════ INGRESOS ══════════════ -->
+<div class="page" id="page-ingresos">
+  <div class="sh"><span class="num">02</span><h2>Estructura de Ingresos — Visión General</h2><span class="note">Corrientes · Capital · Financiamiento</span></div>
+  <div class="ins" id="ins-ing"></div>
+
+  <!-- TRES NIVELES DE INGRESOS -->
+  <div class="g3">
+    <div class="card">
+      <div class="ct">Nivel A — Ingresos Corrientes</div>
+      <div class="cs">IC total · Millones Bs</div>
+      <div class="cw h170"><canvas id="c-ing-ic" role="img" aria-label="Ingresos corrientes totales por año"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Nivel B — Recursos de Capital</div>
+      <div class="cs">Donaciones capital + transferencias cap. · Millones Bs</div>
+      <div class="cw h170"><canvas id="c-ing-rc" role="img" aria-label="Recursos de capital por año"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Nivel C — Fuentes Financieras (Deuda)</div>
+      <div class="cs">Préstamos + Otros pasivos + Dis.Inv.Fin. · Millones Bs</div>
+      <div class="cw h170"><canvas id="c-ing-ff" role="img" aria-label="Fuentes financieras por año"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COMPOSICIÓN IC -->
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Composición de Ingresos Corrientes — apilado</div>
+      <div class="cs">6 componentes · Millones Bs · 2014→2025</div>
+      <div class="cw h260"><canvas id="c-ing-comp" role="img" aria-label="Composición de ingresos corrientes apilada"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Variación anual de Ingresos Corrientes (%)</div>
+      <div class="cs">Crecimiento / caída respecto al año anterior</div>
+      <div class="cw h260"><canvas id="c-ing-var" role="img" aria-label="Variación anual de ingresos corrientes"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TABLA TRES NIVELES -->
+  <div class="card">
+    <div class="ct">Cuadro de Ingresos por Nivel — completo</div>
+    <div class="cs">Millones Bs · % sobre total ingresos GADLP (IC+RC+FF) · 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-ing-niveles"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ TGN ══════════════ -->
+<div class="page" id="page-tgn">
+  <div class="sh"><span class="num">03</span><h2>TGN &amp; Autonomía Fiscal</h2><span class="note">Ingresos con TGN · sin TGN · solo propios</span></div>
+  <div class="ins b" id="ins-tgn"></div>
+  <div class="kb" id="kb-tgn"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Tres niveles de ingresos propios</div>
+      <div class="cs">IC total · IC sin TGN · Solo Recursos Propios · Millones Bs</div>
+      <div class="cw h260"><canvas id="c-tgn-niveles" role="img" aria-label="Tres niveles de ingresos propios"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Peso del TGN en Ingresos Corrientes (%)</div>
+      <div class="cs">Dependencia del Gobierno Central — serie histórica</div>
+      <div class="cw h260"><canvas id="c-tgn-pct" role="img" aria-label="Peso del TGN en ingresos corrientes"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="ct">TGN — absoluto anual</div>
+      <div class="cs">Millones Bs · tendencia ascendente</div>
+      <div class="cw h200"><canvas id="c-tgn-abs" role="img" aria-label="TGN absoluto anual"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Ingresos Sin TGN — evolución</div>
+      <div class="cs">Millones Bs · capacidad de gestión propia</div>
+      <div class="cw h200"><canvas id="c-tgn-sintgn" role="img" aria-label="Ingresos sin TGN evolución"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Recursos Propios — evolución</div>
+      <div class="cs">Millones Bs · solo ingresos propios del GADLP</div>
+      <div class="cw h200"><canvas id="c-tgn-prop" role="img" aria-label="Recursos propios evolución"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Composición: TGN vs Sin TGN (%)</div>
+      <div class="cs">% del total IC cada año — 100% apilado</div>
+      <div class="cw h230"><canvas id="c-tgn-comp100" role="img" aria-label="Composición TGN vs sin TGN porcentaje"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Desglose de ingresos "Sin TGN"</div>
+      <div class="cs">Regalías + IDH + IEHD + Propios + Otras transf. · apilado</div>
+      <div class="cw h230"><canvas id="c-tgn-detalle" role="img" aria-label="Desglose ingresos sin TGN"></canvas></div>
+    </div>
+  </div>
+
+  <!-- tabla detallada -->
+  <div class="card">
+    <div class="ct">Tabla de autonomía fiscal — detalle completo</div>
+    <div class="cs">Millones Bs · % sobre IC cada año · 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-tgn"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ HIDRO ══════════════ -->
+<div class="page" id="page-hidro">
+  <div class="sh"><span class="num">04</span><h2>Recursos Naturales — Hidrocarburos, Regalías, IDH e IEHD</h2><span class="note">Caída estructural hidrocarburífera 2014→2025</span></div>
+  <div class="ins o" id="ins-hidro"></div>
+  <div class="kb" id="kb-hidro"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Bloque Hidrocarburífero (Rag. Hidro. + IDH + IEHD)</div>
+      <div class="cs">Solo recursos hidrocarburíferos · sin regalías mineras ni agropecuarias · Millones Bs</div>
+      <div class="cw h260"><canvas id="c-h-total" role="img" aria-label="Bloque hidrocarburífero total"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Dependencia Hidrocarburífera en IC (%)</div>
+      <div class="cs">(Rag.Hidro + IDH + IEHD) / IC · caída de 64% (2014) a 30% (2025)</div>
+      <div class="cw h260"><canvas id="c-h-pct" role="img" aria-label="Dependencia hidrocarburífera porcentaje"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="ct">Regalías por tipo</div><div class="cs">Hidro + Min. + Agro. · Millones Bs</div><div class="cw h200"><canvas id="c-h-rag" role="img" aria-label="Regalías por tipo"></canvas></div></div>
+    <div class="card"><div class="ct">IDH — Imp. Directo Hidrocarburos</div><div class="cs">Millones Bs · caída pronunciada</div><div class="cw h200"><canvas id="c-h-idh" role="img" aria-label="IDH por año"></canvas></div></div>
+    <div class="card"><div class="ct">IEHD — Imp. Especial Hidrocarburos</div><div class="cs">Millones Bs</div><div class="cw h200"><canvas id="c-h-iehd" role="img" aria-label="IEHD por año"></canvas></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Composición interna del Bloque RRNN (%)</div>
+      <div class="cs">Rag.Hidro + IDH + IEHD + Rag.Min + Rag.Agro · % del total Recursos Naturales · 100% apilado</div>
+      <div class="cw h230"><canvas id="c-h-comp" role="img" aria-label="Composición bloque recursos naturales"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">IDH / IC · IEHD / IC · (IDH+IEHD) / IC (%)</div>
+      <div class="cs">Evolución de la coparticipación hidrocarbúrica</div>
+      <div class="cw h230"><canvas id="c-h-idh-pct" role="img" aria-label="IDH e IEHD porcentaje del IC"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Tabla de Recursos Naturales — completa</div>
+    <div class="cs">Millones Bs · % IC · 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-hidro"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ GASTO ══════════════ -->
+<div class="page" id="page-gasto">
+  <div class="sh"><span class="num">05</span><h2>Gasto Corriente, Capital y Ahorro</h2></div>
+  <div class="ins g" id="ins-gasto"></div>
+  <div class="kb" id="kb-gasto"></div>
+
+  <div class="g2">
+    <div class="card"><div class="ct">Ingresos vs Gastos Corrientes</div><div class="cs">Millones Bs · brecha = ahorro corriente</div><div class="cw h260"><canvas id="c-g-icgc" role="img" aria-label="Ingresos vs gastos corrientes"></canvas></div></div>
+    <div class="card"><div class="ct">Composición del Gasto Corriente</div><div class="cs">Remuneraciones + B&S + Transf. + Otros · Millones Bs</div><div class="cw h260"><canvas id="c-g-comp" role="img" aria-label="Composición gasto corriente"></canvas></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="ct">Ahorro Corriente (C = A−B) + Resultado Financiero Neto (G)</div><div class="cs">Millones Bs · barras = ahorro; línea = resultado G</div><div class="cw h230"><canvas id="c-g-ahorro" role="img" aria-label="Ahorro corriente y resultado neto"></canvas></div></div>
+    <div class="card"><div class="ct">Gastos de Capital vs Recursos de Capital</div><div class="cs">Millones Bs · brecha = necesidad de financiamiento</div><div class="cw h230"><canvas id="c-g-cap" role="img" aria-label="Gastos vs recursos de capital"></canvas></div></div>
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="ct">GC / IC — absorción operativa (%)</div><div class="cs">% del ingreso que consume el gasto corriente</div><div class="cw h200"><canvas id="c-g-gcic" role="img" aria-label="Gasto corriente sobre ingreso corriente"></canvas></div></div>
+    <div class="card"><div class="ct">Remuneraciones / GC (%)</div><div class="cs">Rigidez del gasto · peso de la masa salarial</div><div class="cw h200"><canvas id="c-g-rem" role="img" aria-label="Remuneraciones sobre gasto corriente"></canvas></div></div>
+    <div class="card"><div class="ct">Transferencias corrientes ejecutadas</div><div class="cs">Millones Bs</div><div class="cw h200"><canvas id="c-g-transf" role="img" aria-label="Transferencias corrientes"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ══════════════ DEUDA ══════════════ -->
+<div class="page" id="page-deuda">
+  <div class="sh"><span class="num">06</span><h2>Deuda &amp; Financiamiento</h2><span class="note">Fuentes financieras · endeudamiento · caja · servicio</span></div>
+  <div class="ins" id="ins-deuda"></div>
+  <div class="kb" id="kb-deuda"></div>
+
+  <div class="g2">
+    <div class="card"><div class="ct">Fuentes Financieras — composición</div><div class="cs">Dis.Inv.Fin. + Prést.Int. + Prést.Ext. + Otros Pasivos · Millones Bs</div><div class="cw h260"><canvas id="c-d-fuentes" role="img" aria-label="Fuentes financieras por componente"></canvas></div></div>
+    <div class="card"><div class="ct">Aplicaciones Financieras — composición</div><div class="cs">Amort. Deuda + Inversión Financiera · Millones Bs</div><div class="cw h260"><canvas id="c-d-aplic" role="img" aria-label="Aplicaciones financieras"></canvas></div></div>
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="ct">Endeudamiento neto anual</div><div class="cs">Nuevos préstamos (+) vs Amortizaciones (−) · Millones Bs</div><div class="cw h200"><canvas id="c-d-neto" role="img" aria-label="Endeudamiento neto anual"></canvas></div></div>
+    <div class="card"><div class="ct">Uso / Acumulación de Caja y Bancos</div><div class="cs">Dis.Inv.Fin. (fuente) vs Inc.Inv.Fin. (aplicación)</div><div class="cw h200"><canvas id="c-d-caja" role="img" aria-label="Uso y acumulación de caja"></canvas></div></div>
+    <div class="card"><div class="ct">Amortización Deuda Flotante</div><div class="cs">Parte de aplicaciones financieras · Millones Bs</div><div class="cw h200"><canvas id="c-d-float" role="img" aria-label="Amortización deuda flotante"></canvas></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="ct">Fuentes Financieras / IC (%)</div><div class="cs">Peso relativo del financiamiento externo</div><div class="cw h200"><canvas id="c-d-ffic" role="img" aria-label="Fuentes financieras sobre IC"></canvas></div></div>
+    <div class="card"><div class="ct">Amort. Deuda / Fuentes Financieras (%)</div><div class="cs">Servicio de la deuda respecto a las fuentes captadas</div><div class="cw h200"><canvas id="c-d-amff" role="img" aria-label="Amortización sobre fuentes financieras"></canvas></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Cuadro completo — Ingresos totales GADLP (IC + RC + Fuentes)</div>
+    <div class="cs">Millones Bs · 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-deuda-total"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ RATIOS ══════════════ -->
+<div class="page" id="page-ratios">
+  <div class="sh"><span class="num">07</span><h2>Panel de Ratios — Serie Histórica Completa</h2><span class="note">Siempre 2014→2025 · cronológico</span></div>
+
+  <!-- GRUPO A: DEPENDENCIA -->
+  <div class="sh" style="margin-top:10px"><span class="num" style="background:var(--R)">A</span><h2>Dependencia de Fuentes Externas</h2></div>
+  <div class="g3">
+    <div class="card"><div class="ct">Dep. Hidrocarbúrica (%)</div><div class="cs">(Rag.+IDH+IEHD) / IC</div><div class="cw h170"><canvas id="c-r-dh" role="img" aria-label="Dependencia hidrocarburífera histórica"></canvas></div></div>
+    <div class="card"><div class="ct">Dep. del TGN (%)</div><div class="cs">TGN / IC</div><div class="cw h170"><canvas id="c-r-dt" role="img" aria-label="Dependencia TGN histórica"></canvas></div></div>
+    <div class="card"><div class="ct">Dep. Total (TGN+Hidro) (%)</div><div class="cs">(TGN+Rag+IDH+IEHD) / IC</div><div class="cw h170"><canvas id="c-r-dtot" role="img" aria-label="Dependencia total histórica"></canvas></div></div>
+  </div>
+
+  <!-- GRUPO B: AUTONOMÍA -->
+  <div class="sh" style="margin-top:4px"><span class="num" style="background:var(--grn)">B</span><h2>Autonomía y Capacidad Propia</h2></div>
+  <div class="g3">
+    <div class="card"><div class="ct">Autofinanciamiento (%)</div><div class="cs">Rec. Propios / IC</div><div class="cw h170"><canvas id="c-r-af" role="img" aria-label="Autofinanciamiento histórico"></canvas></div></div>
+    <div class="card"><div class="ct">Ing. Sin TGN / IC (%)</div><div class="cs">Capacidad de gestión sin Gobierno Central</div><div class="cw h170"><canvas id="c-r-stgn" role="img" aria-label="Sin TGN sobre IC histórico"></canvas></div></div>
+    <div class="card"><div class="ct">Regalías / IC (%)</div><div class="cs">Peso de los recursos naturales propios</div><div class="cw h170"><canvas id="c-r-rag" role="img" aria-label="Regalías sobre IC histórico"></canvas></div></div>
+  </div>
+
+  <!-- GRUPO C: EFICIENCIA FISCAL -->
+  <div class="sh" style="margin-top:4px"><span class="num" style="background:var(--blu)">C</span><h2>Eficiencia Fiscal y Ahorro</h2></div>
+  <div class="g3">
+    <div class="card"><div class="ct">Margen Ahorro Corriente (%)</div><div class="cs">Ahorro Corr. / IC</div><div class="cw h170"><canvas id="c-r-ah" role="img" aria-label="Margen ahorro corriente histórico"></canvas></div></div>
+    <div class="card"><div class="ct">GC / IC — presión operativa (%)</div><div class="cs">Gasto corriente sobre ingreso corriente</div><div class="cw h170"><canvas id="c-r-gcic" role="img" aria-label="Presión operativa histórica"></canvas></div></div>
+    <div class="card"><div class="ct">Remuneraciones / GC (%)</div><div class="cs">Rigidez de la masa salarial</div><div class="cw h170"><canvas id="c-r-rem" role="img" aria-label="Rigidez salarial histórica"></canvas></div></div>
+  </div>
+
+  <!-- GRUPO D: DEUDA E INVERSIÓN -->
+  <div class="sh" style="margin-top:4px"><span class="num" style="background:var(--gold)">D</span><h2>Deuda e Inversión</h2></div>
+  <div class="g3">
+    <div class="card"><div class="ct">Inversión de Capital / IC (%)</div><div class="cs">Esfuerzo inversor relativo</div><div class="cw h170"><canvas id="c-r-cap" role="img" aria-label="Inversión capital sobre IC histórico"></canvas></div></div>
+    <div class="card"><div class="ct">Fuentes Financieras / IC (%)</div><div class="cs">Peso relativo del financiamiento</div><div class="cw h170"><canvas id="c-r-ffic" role="img" aria-label="Fuentes financieras sobre IC histórico"></canvas></div></div>
+    <div class="card"><div class="ct">Amort. Deuda / Fuentes Fin. (%)</div><div class="cs">Carga del servicio de la deuda</div><div class="cw h170"><canvas id="c-r-am" role="img" aria-label="Amortización sobre fuentes histórico"></canvas></div></div>
+  </div>
+
+  <!-- MATRIZ COMPLETA -->
+  <div class="card">
+    <div class="ct">Matriz Completa de Ratios Fiscales 2014–2025</div>
+    <div class="cs">Verde = favorable · Rojo = crítico · Ordenado cronológicamente · 12 ratios × 12 años</div>
+    <div class="tscroll"><table class="rtbl" id="t-ratios"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ DÉFICIT ══════════════ -->
+<div class="page" id="page-deficit">
+  <div class="sh"><span class="num">09</span><h2>Análisis de Déficit — Tres Criterios</h2><span class="note">G · Déficit de Caja · Déficit Bruto de Financiamiento</span></div>
+
+  <!-- CRITERIOS EXPLICADOS -->
+  <div class="g3" style="margin-bottom:14px">
+    <div class="card" style="border-top:3px solid var(--R)">
+      <div class="ct">① Resultado Financiero Neto (G)</div>
+      <div class="cs">Criterio contable del CAIF · RM 467/2021</div>
+      <div style="font-size:.75rem;color:var(--ink2);line-height:1.6;margin-top:6px">
+        <strong>G = (A − B) + (D − E)</strong><br>
+        Mide si los ingresos corrientes y de capital cubren el gasto corriente y de capital, <em>antes</em> de cualquier operación financiera. Es la identidad central del CAIF — si G &lt; 0, el gobierno no genera recursos suficientes con su actividad ordinaria e inversora.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="ct">② Déficit de Caja</div>
+      <div class="cs">G más servicio de deuda (amortizaciones)</div>
+      <div style="font-size:.75rem;color:var(--ink2);line-height:1.6;margin-top:6px">
+        <strong>Déficit Caja = G − Amort. Deuda</strong><br>
+        Añade las amortizaciones de deuda que el CAIF registra fuera de G (en J). Refleja el <em>hueco real de caja</em> que el GADLP debe cubrir cada año — el déficit que un tesorero siente en su cuenta bancaria.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blu)">
+      <div class="ct">③ Déficit Bruto de Financiamiento</div>
+      <div class="cs">Necesidad total de recursos externos</div>
+      <div style="font-size:.75rem;color:var(--ink2);line-height:1.6;margin-top:6px">
+        <strong>Déficit Bruto = G − Amort. − Inc.Inv.Fin.</strong><br>
+        Incluye también el incremento de inversión financiera (acumulación de caja/bancos). Es el total de Fuentes Financieras brutas requeridas. Identidad: Déficit Bruto = −Fuentes Financieras (I).
+      </div>
+    </div>
+  </div>
+
+  <div class="kb" id="kb-def"></div>
+
+  <!-- GRÁFICOS -->
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Tres criterios de déficit — serie histórica</div>
+      <div class="cs">Millones Bs · valores negativos = déficit · 2014→2025</div>
+      <div class="cw h280"><canvas id="c-def-tres" role="img" aria-label="Tres criterios de déficit"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Déficit como % de Ingresos Corrientes</div>
+      <div class="cs">Intensidad relativa de cada criterio</div>
+      <div class="cw h280"><canvas id="c-def-pct" role="img" aria-label="Déficit como porcentaje del IC"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="ct">Descomposición del Déficit de Caja</div>
+      <div class="cs">G + Amortización (contribución de cada componente)</div>
+      <div class="cw h200"><canvas id="c-def-comp" role="img" aria-label="Descomposición déficit de caja"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Fuentes Financieras — destino de cada peso</div>
+      <div class="cs">Cómo se usan las Fuentes: cubre G · amort. · acumula caja</div>
+      <div class="cw h200"><canvas id="c-def-uso" role="img" aria-label="Destino fuentes financieras"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Amortización de Deuda vs G</div>
+      <div class="cs">Peso del servicio de deuda respecto al déficit contable</div>
+      <div class="cw h200"><canvas id="c-def-am-g" role="img" aria-label="Amortización vs déficit contable"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TABLA CUADRO DE CIERRE -->
+  <div class="card">
+    <div class="ct">Cuadro de Cierre Fiscal — identidades y criterios de déficit</div>
+    <div class="cs">Millones Bs · verifica G + H = 0 · 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-deficit"></table></div>
+  </div>
+</div>
+
+<!-- ══════════════ TABLA ══════════════ -->
+<div class="page" id="page-tabla">
+  <div class="sh"><span class="num">10</span><h2>Tabla Completa CAIF</h2><span class="note">Todas las variables · Millones Bs · 2014→2025</span></div>
+  <div class="card">
+    <div class="ct">Cuenta Ahorro-Inversión-Financiamiento — Datos completos</div>
+    <div class="cs">Millones Bs (2 decimales) · cronológico 2014→2025</div>
+    <div class="tscroll"><table class="dtbl" id="t-full"></table></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div id="kpi-tip" class="kpi-tooltip"></div>
+<div class="footer">Gobierno Autónomo Departamental de La Paz &nbsp;·&nbsp; CAIF 2014–2025 &nbsp;·&nbsp; Fuente: SIGEP / RConCaif &nbsp;·&nbsp; Elaboración propia</div>
+
+<script>
+// ════════════════════════════════════════
+// DATA — ALL SERIES
+// ════════════════════════════════════════
+
+const isDark = () => document.documentElement.classList.contains('dark-mode');
+const tickColor = () => isDark() ? 'rgba(240,232,216,.7)' : '#6b4e36';
+const gridColor = () => isDark() ? 'rgba(240,232,216,.06)' : 'rgba(107,78,54,.07)';
+const labelColor = () => isDark() ? 'rgba(240,232,216,.85)' : 'rgba(58,42,24,.7)';
+const labelNegColor = () => isDark() ? 'rgba(255,120,110,.9)' : 'rgba(199,30,29,.8)';
+const totalColor = () => isDark() ? 'rgba(255,210,120,.9)' : 'rgba(58,42,24,.75)';
+
+function toggleDark() {
+  const on = document.documentElement.classList.toggle('dark-mode');
+  document.getElementById('darkBtn').textContent = on ? '☀ Claro' : '☽ Oscuro';
+  localStorage.setItem('caif-dark', on ? '1' : '0');
+  Chart.defaults.color = on ? 'rgba(240,232,216,.7)' : '#6b4e36';
+  render();
+}
+
+const S={
+  ing_corrientes:{2014:1405772221.94,2015:1369647559.69,2016:1333871319.93,2017:1479652431.26,2018:1556933967.26,2019:1584060652.32,2020:1473222441.05,2021:1677005604.18,2022:1657359597.91,2023:1536803632.12,2024:1534510285.45,2025:1716821100.88},
+  venta_bs:{2014:119792304.43,2015:155230519.92,2016:158724769.42,2017:158636822.22,2018:175944526.93,2019:92047685.46,2020:41731087.9,2021:47150245.17,2022:50595815.34,2023:39838312.84,2024:43958728.79,2025:44087738.93},
+  tributarios:{2014:0.0,2015:0.0,2016:16477.73,2017:28248034.14,2018:35530368.46,2019:25552561.11,2020:22368763.0,2021:40162931.37,2022:33380342.24,2023:29479170.78,2024:28410835.75,2025:30661735.1},
+  tasas:{2014:2027641.27,2015:2141088.75,2016:4333688.55,2017:5024541.18,2018:5189858.49,2019:5050333.85,2020:4405215.43,2021:5143545.55,2022:5229673.05,2023:5124334.67,2024:5313556.57,2025:4951454.93},
+  otros_propios:{2014:8026265.95,2015:11975598.36,2016:6773782.89,2017:12496092.81,2018:2344416.58,2019:9020273.06,2020:2136387.95,2021:7889561.71,2022:9270996.85,2023:3022854.9,2024:3182238.89,2025:721128.35},
+  intereses_prop:{2014:0.0,2015:0.0,2016:0.0,2017:0.0,2018:0.0,2019:4601214.1,2020:19410.0,2021:84510.0,2022:3556022.14,2023:6309350.1,2024:4757993.29,2025:4298861.77},
+  regalias:{2014:221617406.06,2015:130107418.07,2016:138444140.01,2017:181894843.21,2018:137570292.66,2019:200760447.37,2020:173625841.4,2021:362760899.05,2022:357522746.47,2023:315599838.32,2024:263426598.56,2025:391206200.93},
+  regalias_hidro:{2014:0.0,2015:0.0,2016:0.0,2017:0.0,2018:0.0,2019:0.0,2020:0.0,2021:0.0,2022:0.0,2023:0.0,2024:0.0,2025:0.0},
+  regalias_min:{2014:220848535.88,2015:128996860.51,2016:137572883.44,2017:181297344.86,2018:137081488.49,2019:200179091.26,2020:173347691.94,2021:362477886.05,2022:357283726.05,2023:315465242.1,2024:263176828.85,2025:390974308.59},
+  regalias_agro:{2014:768870.18,2015:1110557.55,2016:871256.57,2017:597498.35,2018:488804.17,2019:581356.11,2020:278149.46,2021:283013.0,2022:239020.42,2023:134596.22,2024:249769.71,2025:231892.34},
+  idh:{2014:237830905.66,2015:169157303.7,2016:82669296.08,2017:84680743.75,2018:102431286.26,2019:86488741.2,2020:104987930.57,2021:73038831.75,2022:96201751.61,2023:75634594.21,2024:61161343.59,2025:43116495.24},
+  iehd:{2014:94340560.66,2015:122091141.92,2016:127213597.63,2017:146461566.34,2018:144890729.93,2019:90013835.13,2020:79947482.65,2021:92747034.61,2022:37646352.11,2023:13525119.71,2024:37738526.75,2025:13485979.78},
+  tgn:{2014:696539476.1,2015:758149873.74,2016:796734268.28,2017:845141866.67,2018:932794264.57,2019:1035703169.78,2020:1015035482.98,2021:1010775979.25,2022:1025559283.68,2023:1009043386.05,2024:1049165150.08,2025:1142542477.95},
+  otras_transf:{2014:19370439.51,2015:15751050.99,2016:12740681.99,2017:10792558.35,2018:12949484.38,2019:26073255.96,2020:21640765.92,2021:28909488.72,2022:29995555.62,2023:30934938.84,2024:28538331.67,2025:31938255.56},
+  recursos_propios:{2014:134028890.39,2015:174290799.52,2016:175246037.12,2017:210284746.67,2018:225830184.46,2019:144288169.13,2020:77984937.53,2021:108773370.8,2022:110433908.42,2023:92065754.99,2024:94480334.8,2025:94531691.42},
+  donaciones_cap:{2014:0.0,2015:0.0,2016:0.0,2017:0.0,2018:0.0,2019:467597.47,2020:546934.08,2021:0.0,2022:0.0,2023:542632.86,2024:0.0,2025:0.0},
+  transf_cap:{2014:241485086.49,2015:81883332.0,2016:33163842.1,2017:23238661.35,2018:48329096.63,2019:35917334.21,2020:14270437.64,2021:43432270.09,2022:47475994.37,2023:60514659.52,2024:37895285.69,2025:46146028.45},
+  recursos_cap:{2014:241485086.49,2015:81923704.32,2016:33163842.1,2017:23238661.35,2018:48329096.63,2019:36384931.68,2020:14817371.72,2021:43432270.09,2022:47475994.37,2023:61057292.38,2024:37895285.69,2025:46146028.45},
+  dis_inv_fin:{2014:16978114.23,2015:6568838.98,2016:15363248.65,2017:28852100.85,2018:4804972.85,2019:23110174.9,2020:3515682.17,2021:1959094.46,2022:1759838.45,2023:75280877.12,2024:132399877.39,2025:775530.93},
+  prestamos_int:{2014:47566870.66,2015:0.0,2016:0.0,2017:0.0,2018:0.0,2019:0.0,2020:0.0,2021:0.0,2022:0.0,2023:0.0,2024:0.0,2025:0.0},
+  prestamos_ext:{2014:22420432.58,2015:14620632.88,2016:12842415.08,2017:0.0,2018:0.0,2019:0.0,2020:0.0,2021:0.0,2022:0.0,2023:0.0,2024:0.0,2025:0.0},
+  otros_pasivos:{2014:28837344.64,2015:13237512.92,2016:56548693.67,2017:67484913.65,2018:87917504.22,2019:71368340.61,2020:68555763.61,2021:78810971.54,2022:65370676.15,2023:69765559.29,2024:74622827.0,2025:85171328.65},
+  fuentes_fin:{2014:115802762.11,2015:34426984.77,2016:84754357.4,2017:96337014.5,2018:92722477.07,2019:94478515.51,2020:72071445.78,2021:80770066.0,2022:67130514.6,2023:145046436.41,2024:207022704.39,2025:85946859.58},
+  gastos_corrientes:{2014:990200800.43,2015:1027063011.9,2016:1030743514.95,2017:1118399859.72,2018:1220272465.5,2019:1236873796.47,2020:1188248004.55,2021:1179590773.4,2022:1225168381.2,2023:1290101716.79,2024:1344165605.08,2025:1413273737.41},
+  gastos_cap:{2014:708186155.57,2015:375924608.94,2016:307389331.66,2017:376649630.9,2018:359454522.36,2019:352078534.36,2020:260538184.3,2021:291982224.0,2022:326397353.15,2023:353701074.03,2024:336861171.36,2025:322422886.8},
+  aplicaciones_fin:{2014:64673114.53,2015:83010627.94,2016:113656672.82,2017:104178616.51,2018:118258553.1,2019:125971768.68,2020:111325069.7,2021:329634942.87,2022:220400372.53,2023:99104570.09,2024:98401499.09,2025:113217364.7},
+  amort_deuda:{2014:55904185.04,2015:54544734.18,2016:47014734.35,2017:39896098.45,2018:42468575.22,2019:58855665.33,2020:31725031.99,2021:25507628.24,2022:47325396.89,2023:30460496.04,2024:24962434.56,2025:25780487.38},
+  inv_financiera:{2014:8768929.49,2015:28465893.76,2016:66641938.47,2017:64282518.06,2018:75789977.88,2019:67116103.35,2020:79600037.71,2021:304127314.63,2022:173074975.64,2023:68644074.05,2024:73439064.53,2025:87436877.32},
+  ahorro_corriente:{2014:415571421.51,2015:342584547.79,2016:303127804.98,2017:361252571.54,2018:336661501.76,2019:347186855.85,2020:284974436.5,2021:497414830.78,2022:432191216.71,2023:246701915.33,2024:190344680.37,2025:303547363.47},
+  saldo_capital:{2014:-466701069.08,2015:-294000904.62,2016:-274225489.56,2017:-353410969.55,2018:-311125425.73,2019:-315693602.68,2020:-245720812.58,2021:-248549953.91,2022:-278921358.78,2023:-292643781.65,2024:-298965885.67,2025:-276276858.35},
+  resultado_fin:{2014:-51129647.57,2015:48583643.17,2016:28902315.42,2017:7841601.99,2018:25536076.03,2019:31493253.17,2020:39253623.92,2021:248864876.87,2022:153269857.93,2023:-45941866.32,2024:-108621205.3,2025:27270505.12},
+  financiamiento_neto:{2014:51129647.58,2015:-48583643.17,2016:-28902315.42,2017:-7841602.01,2018:-25536076.03,2019:-31493253.17,2020:-39253623.92,2021:-248864876.87,2022:-153269857.93,2023:45941866.32,2024:108621205.3,2025:-27270505.12}
+};
+// Extra series (gasto breakdown)
+const SE={
+  remun:{2014:613270695.84,2015:668178024.76,2016:740655400.32,2017:816016230.07,2018:858194934.34,2019:910876161.6,2020:889522749.29,2021:885958876.35,2022:914142543.68,2023:949899882.87,2024:986906463.75,2025:1053120714.85},
+  bienes:{2014:247616752.92,2015:214235104.79,2016:190782363.33,2017:201378430.64,2018:260404135.59,2019:237423647.31,2020:217505452.94,2021:217840102.04,2022:235404032.68,2023:268364031.0,2024:281954342.64,2025:308206113.43},
+  transfc:{2014:119650572.99,2015:125012105.19,2016:84195817.91,2017:89518129.53,2018:92155032.69,2019:77873723.76,2020:72457518.47,2021:71603132.03,2022:68389604.13,2023:55404826.49,2024:58445195.99,2025:45295432.38},
+  float:{2014:34972939.12,2015:32595404.15,2016:13604273.36,2017:4332085.76,2018:6519179.26,2019:25450968.14,2020:6099189.84,2021:5234088.95,2022:14709149.45,2023:213261.77,2024:558975.37,2025:2180214.71}
+};
+
+const YY=[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]; // cronológico
+const M=1e6;
+let selY='all', curPg='resumen';
+
+// ── helpers ──
+const g=(s,y)=>S[s]?.[y]||SE[s]?.[y]||0;
+const gM=(s,y)=>g(s,y)/M;
+const fm=(v,d=1)=>(v/M).toLocaleString('es-BO',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fp=(v,d=1)=>v.toLocaleString('es-BO',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pc=(v,t,d=1)=>t?(v/t*100).toFixed(d):'—';
+const bloqueHidro=y=>g('regalias_hidro',y)+g('idh',y)+g('iehd',y); // solo hidrocarburos
+const rrnn=y=>g('regalias',y)+g('idh',y)+g('iehd',y);              // todos los recursos naturales
+const hidro=bloqueHidro; // alias para compatibilidad con ratios y topbar
+const sinTGN=y=>g('ing_corrientes',y)-g('tgn',y);
+const ingTotal=y=>g('ing_corrientes',y)+g('recursos_cap',y)+g('fuentes_fin',y);
+const lbs=()=>selY==='all'?[...YY]:[parseInt(selY)];
+
+// ── chart defaults ──
+const C={R:'#c71e1d',Rp:'rgba(199,30,29,.1)',g:'#1d5938',gp:'rgba(29,89,56,.1)',b:'#183d6a',bp:'rgba(24,61,106,.1)',o:'#9e7500',op:'rgba(158,117,0,.1)',t:'#185252',tp:'rgba(24,82,82,.1)',p:'#4a2a6e',pp:'rgba(74,42,110,.1)',m:'#6b4e36',mp:'rgba(107,78,54,.1)',gl:'#2a8454',ol:'#c49a1a',bl:'#2558a4',tl:'#287878'};
+Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
+Chart.defaults.color='#6b4e36';
+Chart.defaults.devicePixelRatio = Math.max(window.devicePixelRatio||1, 2);
+const GR = () => ({grid:{color:gridColor(),drawBorder:false},ticks:{color:tickColor(),font:{size:10}}});
+const YT = () => ({...GR(),ticks:{callback:v=>v+'M',color:tickColor(),font:{size:10}}});
+const fmtBs = v => {
+  if (typeof v !== 'number') return '';
+  const abs = Math.abs(v);
+  if (abs >= 1000) return (v/1000).toLocaleString('es-BO',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' MM Bs';
+  return v.toLocaleString('es-BO',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' M Bs';
+};
+const TTP = {backgroundColor:'rgba(24,14,6,.95)',titleColor:'#fdfaf3',bodyColor:'rgba(253,250,243,.85)',borderColor:'#c71e1d',borderWidth:1,padding:11,cornerRadius:6,filter:(item)=>item.raw!==0&&item.raw!==null,callbacks:{label:ctx=>{ const v=ctx.raw; if(typeof v!=='number') return ''; return ' ' + ctx.dataset.label + ': ' + fmtBs(v); }}};
+const TPCT = {...TTP, callbacks:{label:ctx=>{ const v=ctx.raw; if(typeof v!=='number') return ''; return ' ' + ctx.dataset.label + ': ' + v.toLocaleString('es-BO',{minimumFractionDigits:1,maximumFractionDigits:1}) + '%'; }}};
+const chs={};
+function mk(id,cfg){
+  if(chs[id])chs[id].destroy();
+  const el=document.getElementById(id); if(!el)return;
+  chs[id]=new Chart(el.getContext('2d'),cfg);
+  const cw=el.parentElement;
+  if(cw&&cw.classList.contains('cw')){
+    const old=cw.querySelector('.chart-dl'); if(old)old.remove();
+    const card=cw.closest('.card');
+    const title=card?.querySelector('.ct')?.textContent||id;
+    const sub=card?.querySelector('.cs')?.textContent||'';
+    const btn=document.createElement('button');
+    btn.className='chart-dl'; btn.innerHTML='PDF'; btn.title='Descargar como PDF diapositiva';
+    btn.onclick=function(e){e.stopPropagation();expChartPDF(id,title,sub);};
+    cw.appendChild(btn);
+  }
+}
+
+// ── chart builders ──
+// ── PLUGIN: totals on stacked bars ──────────────
+const stackedTotalsPlugin={
+  id:'stackedTotals',
+  afterDatasetsDraw(chart){
+    if(!chart.config.options._showStackTotals) return;
+    const{ctx,data,scales:{x,y}}=chart;
+    // Compute visible sum per label index
+    const nLabels=data.labels.length;
+    const totals=new Array(nLabels).fill(0);
+    chart.data.datasets.forEach((ds,di)=>{
+      const meta=chart.getDatasetMeta(di);
+      if(meta.hidden) return;
+      ds.data.forEach((v,i)=>{if(v>0) totals[i]+=v;});
+    });
+    ctx.save();
+    ctx.font='bold 9px "IBM Plex Mono", monospace';
+    ctx.fillStyle=totalColor();
+    ctx.textAlign='center';
+    ctx.textBaseline='bottom';
+    totals.forEach((tot,i)=>{
+      if(tot===0) return;
+      // find the topmost bar meta for this index
+      let topY=null;
+      chart.data.datasets.forEach((ds,di)=>{
+        const meta=chart.getDatasetMeta(di);
+        if(meta.hidden) return;
+        const bar=meta.data[i];
+        if(!bar) return;
+        const by=bar.y;
+        if(topY===null||by<topY) topY=by;
+      });
+      if(topY!==null) ctx.fillText(fp(tot,0)+'M', x.getPixelForValue(i), topY-3);
+    });
+    ctx.restore();
+  }
+};
+Chart.register(stackedTotalsPlugin);
+
+// ── PLUGIN: value labels on simple (non-stacked) bars ──
+const barLabelsPlugin={
+  id:'barLabels',
+  afterDatasetsDraw(chart){
+    if(!chart.config.options._barLabels) return;
+    const{ctx,scales:{x,y}}=chart;
+    ctx.save();
+    ctx.font='bold 8.5px "IBM Plex Mono",monospace';
+    ctx.textAlign='center';
+    ctx.textBaseline='bottom';
+    chart.data.datasets.forEach((ds,di)=>{
+      const meta=chart.getDatasetMeta(di);
+      if(meta.hidden||meta.type==='line') return;
+      meta.data.forEach((bar,i)=>{
+        const v=ds.data[i];
+        if(!v&&v!==0) return;
+        const absV=Math.abs(v);
+        if(absV<0.5) return; // skip near-zero
+        ctx.fillStyle=v<0?labelNegColor():labelColor();
+        const barY=v<0?bar.y+12:bar.y-3;
+        ctx.fillText(fp(absV,0)+'M', bar.x, barY);
+      });
+    });
+    ctx.restore();
+  }
+};
+Chart.register(barLabelsPlugin);
+
+// ── barChart: stacked → totals plugin · simple → value labels ──
+function barChart(id,YY,ds,stk=false,leg='bottom'){
+  mk(id,{type:'bar',data:{labels:YY,datasets:ds},options:{
+    responsive:true,maintainAspectRatio:false,
+    _showStackTotals:stk,
+    _barLabels:!stk,
+    plugins:{legend:{position:leg,labels:{font:{size:9},boxWidth:10,padding:6}},tooltip:TTP},
+    scales:{x:{stacked:stk,...GR()},y:{stacked:stk,...YT(),ticks:{...YT().ticks,
+      // add a little top padding so labels don't clip
+      callback:v=>v+'M'}}},
+    layout:{padding:{top:18}}
+  }});
+}
+function lineChart(id,YY,ds,unit='%',leg='bottom'){
+  mk(id,{type:'line',data:{labels:YY,datasets:ds},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:leg,labels:{font:{size:9},boxWidth:10,padding:6}},tooltip:TPCT},
+    scales:{x:GR(),y:{...GR(),ticks:{callback:v=>v+unit,color:tickColor(),font:{size:10}}}}}});
+}
+function comboChart(id,YY,bars,lines){
+  const dsBars=bars.map(d=>({...d,type:'bar'}));
+  const dsLines=lines.map(d=>({...d,type:'line',fill:false,tension:.3,pointRadius:4}));
+  mk(id,{type:'bar',data:{labels:YY,datasets:[...dsBars,...dsLines]},
+    options:{responsive:true,maintainAspectRatio:false,
+      _barLabels:false, _showStackTotals:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}},tooltip:TTP},
+      scales:{x:GR(),y:YT()},layout:{padding:{top:4}}}});
+}
+function pie100(id,YY,ds){
+  mk(id,{type:'bar',data:{labels:YY,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      _barLabels:false,_showStackTotals:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}},
+        tooltip:{...TTP,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fp(ctx.raw)}%`}}},
+      scales:{x:{stacked:true,...GR()},y:{stacked:true,min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+}
+
+
+// ── TRENDLINE PLUGIN ──
+const trendlinePlugin={id:'trendline',afterDatasetsDraw(chart){
+  if(!chart.config.options._trendline) return;
+  const{ctx,data,scales:{x,y}}=chart; if(!x||!y) return;
+  let ds=null;
+  for(let i=0;i<data.datasets.length;i++){
+    const meta=chart.getDatasetMeta(i);
+    if(!meta.hidden&&data.datasets[i].data&&data.datasets[i].data.length>1){ds=data.datasets[i];break;}
+  }
+  if(!ds) return;
+  const pts=ds.data.map((v,i)=>({x:i,y:typeof v==='number'?v:0})).filter(p=>p.y!==0);
+  if(pts.length<2) return;
+  const n=pts.length,
+    sumX=pts.reduce((a,p)=>a+p.x,0),sumY=pts.reduce((a,p)=>a+p.y,0),
+    sumXY=pts.reduce((a,p)=>a+p.x*p.y,0),sumX2=pts.reduce((a,p)=>a+p.x*p.x,0);
+  const denom=n*sumX2-sumX*sumX; if(!denom) return;
+  const slope=(n*sumXY-sumX*sumY)/denom,intercept=(sumY-slope*sumX)/n;
+  const x0=pts[0].x,x1=pts[pts.length-1].x;
+  ctx.save();ctx.beginPath();
+  ctx.moveTo(x.getPixelForValue(x0),y.getPixelForValue(slope*x0+intercept));
+  ctx.lineTo(x.getPixelForValue(x1),y.getPixelForValue(slope*x1+intercept));
+  ctx.strokeStyle='rgba(199,30,29,.5)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.stroke();
+  ctx.restore();
+}};
+Chart.register(trendlinePlugin);
+
+function lineRatio(id,YY,fn,lbl,clr,fill=true){
+  if(chs[id])chs[id].destroy();
+  const el=document.getElementById(id);if(!el)return;
+  chs[id]=new Chart(el.getContext('2d'),{type:'line',
+    data:{labels:YY,datasets:[{label:lbl,data:YY.map(fn),borderColor:clr,backgroundColor:fill?clr+'18':undefined,fill,tension:.35,pointRadius:4,pointBackgroundColor:clr,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,_trendline:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}},tooltip:TPCT},
+      scales:{x:GR(),y:{...GR(),ticks:{callback:v=>v+'%',color:tickColor(),font:{size:10}}}}}
+  });
+}
+
+
+const KPI_FORMULAS = {
+  'Ing. Corrientes': 'Total ingresos corrientes del ejercicio (A)',
+  'IC sin TGN': 'IC menos TGN. Autonomía sin transferencias del Gobierno Central',
+  'Solo Rec. Propios': 'Venta B&S + Tributarios + Tasas + Otros + Intereses',
+  'Gastos Corrientes': 'Total egresos corrientes del ejercicio (B)',
+  'Ahorro Corriente': 'C = A - B. Positivo = ahorro; negativo = desahorro',
+  'Recursos Capital': 'Donaciones capital + Transferencias de capital (D)',
+  'Fuentes Fin. (Deuda)': 'Prestamos + Otros Pasivos + Dis.Inv.Fin. (I)',
+  'Ing. Total (IC+RC+FF)': 'A + D + I — Total de recursos disponibles',
+  'Resultado Fin. Neto': 'G = C + F = (A-B) + (D-E)',
+  'Bloque Hidro. Total': 'Regalias Hidro + IDH + IEHD',
+  'Autofinanciamiento': 'Recursos Propios / IC — capacidad propia',
+  'TGN': 'Transferencias del Tesoro General de la Nacion',
+  'IDH + IEHD': 'Impuesto Directo + Impuesto Especial a Hidrocarburos',
+};
+const _tip = document.getElementById('kpi-tip');
+function _showTip(e, txt){ const t=txt||e.currentTarget.dataset.tip||''; _tip.textContent=t; _tip.style.display='block'; _moveTip(e); }
+function _moveTip(e){ const w=_tip.offsetWidth; _tip.style.left=(e.clientX+12+w>window.innerWidth?e.clientX-w-8:e.clientX+12)+'px'; _tip.style.top=(e.clientY-36)+'px'; }
+function _hideTip(){ _tip.style.display='none'; }
+document.addEventListener('mousemove', e=>{ if(_tip.style.display==='block') _moveTip(e); });
+
+
+let _lastHits = [];
+function clearSearch(){ _lastHits.forEach(el=>el.classList.remove('search-hit')); _lastHits=[]; const sb=document.getElementById('searchBox'); if(sb)sb.value=''; }
+function doSearch(q){
+  _lastHits.forEach(el=>el.classList.remove('search-hit')); _lastHits=[];
+  if(!q||q.length<2) return;
+  const ql=q.toLowerCase();
+  document.querySelectorAll('.page.active td, .page.active th').forEach(el=>{
+    if(el.textContent.toLowerCase().includes(ql)){ el.classList.add('search-hit'); _lastHits.push(el); }
+  });
+  if(_lastHits.length===0){
+    for(const pg of ['resumen','ingresos','tgn','hidro','gasto','deuda','ratios','deficit','tabla']){
+      document.querySelectorAll('#page-'+pg+' td, #page-'+pg+' th').forEach(el=>{
+        if(el.textContent.toLowerCase().includes(ql)){ el.classList.add('search-hit'); _lastHits.push(el); if(_lastHits.length===1) go(pg); }
+      });
+      if(_lastHits.length>0) break;
+    }
+  }
+  if(_lastHits.length>0) _lastHits[0].scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+
+function makeSortable(tableId){
+  const tbl=document.getElementById(tableId);
+  if(!tbl||tbl._sortable) return;
+  tbl._sortable=true; tbl.classList.add('sortable');
+  const hdr=tbl.querySelector('thead tr'); if(!hdr) return;
+  Array.from(hdr.cells).forEach((th,ci)=>{
+    if(ci===0) return;
+    th.addEventListener('click',()=>{
+      const asc=th.classList.contains('asc');
+      hdr.querySelectorAll('th').forEach(t=>t.classList.remove('asc','desc'));
+      th.classList.add(asc?'desc':'asc');
+      const tbody=tbl.querySelector('tbody'); if(!tbody) return;
+      const rows=Array.from(tbody.rows);
+      rows.sort((a,b)=>{
+        const av=parseFloat((a.cells[ci]?.textContent||'0').replace(/[^0-9.-]/g,''))||0;
+        const bv=parseFloat((b.cells[ci]?.textContent||'0').replace(/[^0-9.-]/g,''))||0;
+        return asc?bv-av:av-bv;
+      });
+      rows.forEach(r=>tbody.appendChild(r));
+    });
+  });
+}
+
+
+const ANN_KEY='caif-ann-GADLP';
+let userAnnotations = JSON.parse(localStorage.getItem(ANN_KEY)||'[]');
+const ANN_COLORS = ['#c71e1d','#9e7500','#1d5938','#183d6a','#4a2a6e','#185252'];
+function saveAnnotations(){ localStorage.setItem(ANN_KEY, JSON.stringify(userAnnotations)); }
+function renderAnnRows(){
+  const c=document.getElementById('ann-rows'); if(!c) return; c.innerHTML='';
+  userAnnotations.forEach((ann,i)=>{
+    const row=document.createElement('div'); row.className='ann-row';
+    row.innerHTML='<select onchange="userAnnotations['+i+'].year=+this.value;saveAnnotations();render()">'
+      +[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025].map(y=>'<option value="'+y+'"'+(ann.year===y?' selected':'')+'>'+y+'</option>').join('')
+      +'</select>'
+      +'<input type="text" value="'+ann.label+'" placeholder="Descripcion..." maxlength="30" oninput="userAnnotations['+i+'].label=this.value;saveAnnotations();render()">'
+      +'<input type="color" value="'+ann.color+'" oninput="userAnnotations['+i+'].color=this.value;saveAnnotations();render()">'
+      +'<button class="ann-del" onclick="userAnnotations.splice('+i+',1);saveAnnotations();renderAnnRows();render()">x</button>';
+    c.appendChild(row);
+  });
+}
+function addAnnRow(){ userAnnotations.push({year:2020,label:'',color:ANN_COLORS[userAnnotations.length%ANN_COLORS.length]}); saveAnnotations(); renderAnnRows(); }
+function toggleAnnPanel(){
+  const p=document.getElementById('ann-panel');
+  const open=p.style.display==='none'||p.style.display==='';
+  p.style.display=open?'block':'none';
+  document.getElementById('annBtn').textContent=open?'Cerrar':'Anotar';
+  if(open) renderAnnRows();
+}
+const userAnnotationsPlugin={
+  id:'userAnnotations',
+  afterDraw(chart){
+    if(!userAnnotations.length) return;
+    const{ctx,scales:{x},chartArea}=chart; if(!x||!chartArea) return;
+    const{top,bottom}=chartArea;
+    ctx.save();
+    userAnnotations.filter(a=>a.label).forEach((ann,i)=>{
+      const idx=chart.data.labels.indexOf(ann.year); if(idx<0) return;
+      const px=x.getPixelForValue(idx);
+      ctx.beginPath(); ctx.moveTo(px,top); ctx.lineTo(px,bottom);
+      ctx.strokeStyle=ann.color+'bb'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font='bold 8px IBM Plex Sans,sans-serif'; ctx.fillStyle=ann.color;
+      ctx.textAlign='left'; ctx.fillText(ann.label, px+3, top+(i%2===0?10:22));
+    });
+    ctx.restore();
+  }
+};
+Chart.register(userAnnotationsPlugin);
+
+
+function expChartPDF(canvasId,title,subtitle){
+  const ch=chs[canvasId];if(!ch){alert('Grafico no disponible');return;}
+  const btn=event.currentTarget;
+  const origTxt=btn.innerHTML;btn.innerHTML='...';btn.disabled=true;
+  try{
+    const src=ch.canvas;
+    const dpr=ch.currentDevicePixelRatio||window.devicePixelRatio||1;
+    const visualRatio=(src.width/dpr)/(src.height/dpr);
+    const UPSCALE=2;
+    const flat=document.createElement('canvas');
+    flat.width=src.width*UPSCALE;flat.height=src.height*UPSCALE;
+    const fctx=flat.getContext('2d');
+    fctx.fillStyle='#ffffff';fctx.fillRect(0,0,flat.width,flat.height);
+    fctx.scale(UPSCALE,UPSCALE);fctx.drawImage(src,0,0);
+    const imgData=flat.toDataURL('image/jpeg',0.82);
+    const _m={};
+    _m['\u00e1']='a';_m['\u00e9']='e';_m['\u00ed']='i';_m['\u00f3']='o';_m['\u00fa']='u';
+    _m['\u00fc']='u';_m['\u00f1']='n';_m['\u00c1']='A';_m['\u00c9']='E';_m['\u00cd']='I';
+    _m['\u00d3']='O';_m['\u00da']='U';_m['\u00dc']='U';_m['\u00d1']='N';
+    const pdfTxt=s=>(s||'')
+      .replace(/\u2192/g,'-').replace(/\u00b7/g,'|')
+      .replace(/\u2013/g,'-').replace(/\u2014/g,'-').replace(/\u00d7/g,'x')
+      .split('').map(c=>_m[c]!==undefined?_m[c]:c.charCodeAt(0)<128?c:'').join('');
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[338.7,190.5]});
+    const pw=pdf.internal.pageSize.getWidth();
+    const ph=pdf.internal.pageSize.getHeight();
+    const dept=document.querySelector('.tb-l h1')?.textContent||'GADLP';
+    const yr=selY==='all'?'2014-2025':selY;
+    const hH=13,footT=178,footH=12.5,chartT=36,mg=10;
+    const czH=footT-chartT,czW=pw-mg*2;
+    let iw=czW,ih=iw/visualRatio;
+    if(ih>czH){ih=czH;iw=ih*visualRatio;}
+    iw=Math.min(iw,czW);ih=iw/visualRatio;
+    const ix=(pw-iw)/2;
+    const iy=chartT+(czH-ih)/2;
+    pdf.setFillColor(199,30,29);pdf.rect(0,0,pw,hH,'F');
+    pdf.setTextColor(255,255,255);
+    pdf.setFontSize(8.5);pdf.setFont('helvetica','bold');
+    pdf.text(pdfTxt(dept),mg,hH-3.5);
+    pdf.setFontSize(6.5);pdf.setFont('helvetica','normal');
+    pdf.text('Cuenta Ahorro - Inversion - Financiamiento  |  SIGEP',pw-mg,hH-3.5,{align:'right'});
+    pdf.setTextColor(40,25,10);pdf.setFontSize(10.5);pdf.setFont('helvetica','bold');
+    pdf.text(pdfTxt(title||canvasId),ix,21,{maxWidth:iw});
+    let ny=27;
+    if(subtitle){
+      const sub=subtitle.length>130?subtitle.substring(0,127)+'...':subtitle;
+      pdf.setFontSize(7);pdf.setFont('helvetica','normal');pdf.setTextColor(100,70,40);
+      pdf.text(pdfTxt(sub),ix,27,{maxWidth:iw});
+      ny=32;
+    }
+    pdf.setFontSize(5.5);pdf.setFont('helvetica','italic');pdf.setTextColor(160,130,90);
+    const _deptAttr=pdfTxt(document.querySelector('.tb-l p')?.textContent?.split('\u00b7')[0]?.trim()||'');
+    pdf.text('Fuente: SIGEP / RConCaif'+(_deptAttr?' | '+_deptAttr:''),ix,ny);
+    pdf.setDrawColor(199,30,29);pdf.setLineWidth(0.4);
+    pdf.line(ix,ny+2.5,ix+iw,ny+2.5);
+    pdf.addImage(imgData,'JPEG',ix,iy,iw,ih);
+    pdf.setFillColor(45,30,15);pdf.rect(0,footT,pw,footH,'F');
+    pdf.setFontSize(6.5);pdf.setFont('helvetica','bold');pdf.setTextColor(210,185,145);
+    pdf.text('Observatorio de Presupuesto Fiscal  |  UPSA  |  POPULI',pw/2,footT+5.5,{align:'center'});
+    pdf.setFontSize(5.5);pdf.setFont('helvetica','normal');pdf.setTextColor(165,140,105);
+    pdf.text('Fuente: SIGEP / RConCaif  |  Elaboracion propia',pw/2,footT+9.5,{align:'center'});
+    pdf.setTextColor(180,150,100);
+    pdf.text('Gestion '+yr,mg,footT+7);
+    pdf.text(new Date().toLocaleDateString('es-BO'),pw-mg,footT+7,{align:'right'});
+    const safe=(title||canvasId).replace(/[^a-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'_').substring(0,40);
+    pdf.save('GADLP_CAIF_'+safe+'_'+yr+'.pdf');
+  }catch(e){console.error(e);alert('Error PDF: '+e.message);}
+  btn.innerHTML=origTxt;btn.disabled=false;
+}
+
+// ── KPI band ──
+function kband(id,items){
+  document.getElementById(id).innerHTML=items.map(k=>{
+    const neg=typeof k.v==='string'&&k.v.startsWith('-');
+    const d=k.d!=null?`<span class="dl ${parseFloat(k.d)>=0?'p':'n'}">${parseFloat(k.d)>=0?'▲':'▼'}${Math.abs(parseFloat(k.d))}%</span>`:'';
+    const f=KPI_FORMULAS[k.l]||'';
+    const ib=f?('<div class="kpi-info" onmouseenter="_showTip(event,this.dataset.tip)" data-tip="'+f+'" onmouseleave="_hideTip()">i</div>'):'';
+    return '<div class="kpi '+(k.c||'')+'"><div class="kl">'+k.l+'</div>'+ib+'<div class="kv '+(neg?'neg':'')+'">'+k.v+'</div><div class="km">'+(k.s||'')+' '+d+'</div></div>';
+  }).join('');
+}
+
+// ── delta helper ──
+function delta(s,y,YY){
+  const idx=YY.indexOf(y);if(idx<=0)return null;
+  const prev=YY[idx-1];const l=g(s,y),p=g(s,prev);
+  return p?((l-p)/Math.abs(p)*100).toFixed(1):null;
+}
+
+// ════════════════════════════════════════
+// PAGES
+// ════════════════════════════════════════
+
+// ── RESUMEN ──────────────────────────────
+function rResumen(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ic=g('ing_corrientes',y),gc=g('gastos_corrientes',y),ah=g('ahorro_corriente',y),res=g('resultado_fin',y);
+  const rc=g('recursos_cap',y),ff=g('fuentes_fin',y),itot=ic+rc+ff;
+  document.getElementById('res-note').textContent=selY==='all'?'Serie 2014–2025':`Gestión ${y}`;
+  const allYY=[...YY]; const prev=allYY.length>1?allYY[allYY.length-2]:null;
+  const D=s=>{if(!prev)return null;const l=g(s,y),p=g(s,prev);return p?((l-p)/Math.abs(p)*100).toFixed(1):null;};
+  kband('kb-res',[
+    {l:'Ing. Corrientes',v:fm(ic),c:'r',s:`Bs M · ${y}`,d:D('ing_corrientes')},
+    {l:'IC sin TGN',v:fm(sinTGN(y)),c:'b',s:`${pc(sinTGN(y),ic)}% del IC`},
+    {l:'Solo Rec. Propios',v:fm(g('recursos_propios',y)),c:'g',s:`${pc(g('recursos_propios',y),ic)}% del IC`},
+    {l:'Gastos Corrientes',v:fm(gc),c:'',s:`${pc(gc,ic)}% del IC`,d:D('gastos_corrientes')},
+    {l:'Ahorro Corriente',v:fm(ah),c:ah>=0?'g':'r',s:'C = A − B',d:D('ahorro_corriente')},
+    {l:'Recursos Capital',v:fm(rc),c:'o',s:`${pc(rc,itot)}% del total`},
+    {l:'Fuentes Fin. (Deuda)',v:fm(ff),c:'t',s:`${pc(ff,itot)}% del total`},
+    {l:'Ing. Total (IC+RC+FF)',v:fm(itot),c:'p',s:'Todos los ingresos'},
+    {l:'Resultado Fin. Neto',v:fm(res),c:res>=0?'g':'r',s:'G = C + F',d:D('resultado_fin')},
+  ]);
+  // ── Segmentos unificados: 9 componentes, mismo orden en stack y pie ──
+  // Otras Regalías = Mineras + Agropecuarias (residual, ~2% del total)
+  const SEG=[
+    {l:'Regalías Hidro.', fn:y=>g('regalias_hidro',y),  col:C.R},
+    {l:'IDH',             fn:y=>g('idh',y),              col:C.o},
+    {l:'IEHD',            fn:y=>g('iehd',y),             col:C.ol},
+    {l:'TGN',             fn:y=>g('tgn',y),              col:C.b},
+    {l:'Otras Regalías',  fn:y=>g('regalias_min',y)+g('regalias_agro',y), col:C.m},
+    {l:'Rec. Propios',    fn:y=>g('recursos_propios',y), col:C.g},
+    {l:'Otras Transf.',   fn:y=>g('otras_transf',y),     col:C.t},
+    {l:'Rec. Capital',    fn:y=>g('recursos_cap',y),     col:'#7a5a8a'},
+    {l:'Fuentes Fin.',    fn:y=>g('fuentes_fin',y),      col:'rgba(24,61,106,.55)'},
+  ];
+
+  // Stack — mismos 9 segmentos
+  barChart('c-res-stack', YY,
+    SEG.map(s=>({label:s.l, data:YY.map(y=>s.fn(y)/M), backgroundColor:s.col, stack:'s'})),
+  true);
+
+  // Pie — mismo año seleccionado, mismos 9 segmentos, mismo orden
+  const py=selY==='all'?2025:parseInt(selY);
+  const itotPy=ingTotal(py);
+  document.getElementById('pie-tit').textContent=`Composición total de ingresos ${py}`;
+  document.getElementById('pie-sub').textContent=`IC + Rec.Capital + Fuentes Fin. · Bs ${fm(itotPy)} M · clic para excluir`;
+  const pieSegs=SEG.map(s=>({l:s.l, v:s.fn(py)})).filter(x=>x.v>0);
+  // colors must follow same order as SEG (filtered)
+  const pieCols=SEG.filter(s=>s.fn(py)>0).map(s=>s.col);
+  mk('c-res-pie',null); // destroy previous before custom call
+  // build pie manually to pass custom colors
+  const centrePiePlugin={
+    id:'centre_c-res-pie',
+    beforeDraw(chart){
+      const{ctx,chartArea}=chart; if(!chartArea) return;
+      const ds=chart.data.datasets[0];
+      const hidden=ds._hidden||new Array(ds.data.length).fill(false);
+      let sum=0; ds.data.forEach((v,i)=>{if(!hidden[i])sum+=v;});
+      const cx=chartArea.left+chartArea.width/2, cy=chartArea.top+chartArea.height/2;
+      ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='bold 12px "Playfair Display",serif'; ctx.fillStyle=isDark()?'#f0e8d8':'#3a2a18';
+      ctx.fillText('Bs '+fp(sum,0)+' M', cx, cy-9);
+      ctx.font='9px "IBM Plex Sans",sans-serif'; ctx.fillStyle=isDark()?'#9a8570':'#8e7660';
+      const nH=(ds._hidden||[]).filter(Boolean).length;
+      ctx.fillText(nH>0?`(${ds.data.length-nH} fuentes)`:'total', cx, cy+8);
+      ctx.restore();
+    }
+  };
+  if(chs['c-res-pie']) chs['c-res-pie'].destroy();
+  const pieEl=document.getElementById('c-res-pie');
+  if(pieEl){
+    chs['c-res-pie']=new Chart(pieEl.getContext('2d'),{
+      type:'doughnut',
+      data:{labels:pieSegs.map(x=>x.l),datasets:[{
+        data:pieSegs.map(x=>x.v/M),
+        backgroundColor:pieCols,
+        borderWidth:2, borderColor:'#fdfaf3',
+        _hidden:new Array(pieSegs.length).fill(false)
+      }]},
+      plugins:[centrePiePlugin],
+      options:{
+        responsive:true, maintainAspectRatio:false, cutout:'56%', _centreText:true,
+        animation:{animateRotate:true,animateScale:false},
+        plugins:{
+          legend:{position:'right',labels:{font:{size:9},boxWidth:12,padding:5},
+            generateLabels(chart){
+              const ds=chart.data.datasets[0];
+              const hidden=ds._hidden||new Array(ds.data.length).fill(false);
+              const visTotal=ds.data.reduce((a,v,i)=>hidden[i]?a:a+v,0);
+              return chart.data.labels.map((lbl,i)=>({
+                text:`${lbl} (${hidden[i]?'—':((ds.data[i]/visTotal)*100).toFixed(1)+'%'})`,
+                fillStyle:ds.backgroundColor[i], strokeStyle:'#fdfaf3', lineWidth:2,
+                hidden:hidden[i], index:i
+              }));
+            },
+            onClick(e,item,legend){
+              const chart=legend.chart, ds=chart.data.datasets[0];
+              if(!ds._hidden) ds._hidden=new Array(ds.data.length).fill(false);
+              ds._hidden[item.index]=!ds._hidden[item.index];
+              chart.getDatasetMeta(0).data[item.index].hidden=ds._hidden[item.index];
+              chart.update();
+            }
+          },
+          tooltip:{...TTP,callbacks:{label(ctx){
+            const ds=ctx.chart.data.datasets[0];
+            const hidden=ds._hidden||new Array(ds.data.length).fill(false);
+            const visTotal=ds.data.reduce((a,v,i)=>hidden[i]?a:a+v,0);
+            return ` ${ctx.label}: Bs ${fp(ctx.raw)} M (${visTotal?((ctx.raw/visTotal)*100).toFixed(1):0}%)`;
+          }}}
+        }
+      }
+    });
+  }
+  // Ahorro, Resultado, IJ
+  barChart('c-res-ah',YY,[{label:'Ahorro Corriente',data:YY.map(y=>gM('ahorro_corriente',y)),backgroundColor:YY.map(y=>g('ahorro_corriente',y)>=0?'rgba(29,89,56,.72)':'rgba(199,30,29,.72)')}]);
+  barChart('c-res-res',YY,[{label:'Resultado Fin.',data:YY.map(y=>gM('resultado_fin',y)),backgroundColor:YY.map(y=>g('resultado_fin',y)>=0?'rgba(29,89,56,.72)':'rgba(199,30,29,.72)')}]);
+  barChart('c-res-ij',YY,[{label:'Fuentes Fin.',data:YY.map(y=>gM('fuentes_fin',y)),backgroundColor:'rgba(24,61,106,.6)'},{label:'Aplicaciones',data:YY.map(y=>-gM('aplicaciones_fin',y)),backgroundColor:'rgba(199,30,29,.6)'}]);
+}
+
+// ── INGRESOS ──────────────────────────────
+function rIngresos(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ic=g('ing_corrientes',y),rc=g('recursos_cap',y),ff=g('fuentes_fin',y),tot=ic+rc+ff;
+  document.getElementById('ins-ing').innerHTML=
+    `En <strong>${y}</strong> el GADLP captó Bs <strong>${fm(tot)} M</strong> en total: ingresos corrientes Bs <strong>${fm(ic)} M</strong> (${pc(ic,tot)}%), recursos de capital Bs ${fm(rc)} M (${pc(rc,tot)}%) y fuentes financieras (deuda/caja) Bs ${fm(ff)} M (${pc(ff,tot)}%). Los IC crecieron un ${(()=>{const yy=[...YY];const i=yy.indexOf(y);if(i<=0)return 'N/D';const p=yy[i-1];return ((g('ing_corrientes',y)-g('ing_corrientes',p))/Math.abs(g('ing_corrientes',p))*100).toFixed(1);})()}% respecto al año anterior.`;
+  // Nivel A B C
+  barChart('c-ing-ic',YY,[{label:'Ing. Corrientes',data:YY.map(y=>gM('ing_corrientes',y)),backgroundColor:C.R}]);
+  barChart('c-ing-rc',YY,[{label:'Rec. Capital',data:YY.map(y=>gM('recursos_cap',y)),backgroundColor:C.o}]);
+  barChart('c-ing-ff',YY,[{label:'Fuentes Fin.',data:YY.map(y=>gM('fuentes_fin',y)),backgroundColor:C.b}]);
+  // Composición IC
+  barChart('c-ing-comp',YY,[
+    {label:'Regalías Hidro.',data:YY.map(y=>gM('regalias_hidro',y)),backgroundColor:C.R,stack:'s'},
+    {label:'IDH',data:YY.map(y=>gM('idh',y)),backgroundColor:C.o,stack:'s'},
+    {label:'IEHD',data:YY.map(y=>gM('iehd',y)),backgroundColor:C.ol,stack:'s'},
+    {label:'TGN',data:YY.map(y=>gM('tgn',y)),backgroundColor:C.b,stack:'s'},
+    {label:'Regalías Min/Agro.',data:YY.map(y=>(g('regalias_min',y)+g('regalias_agro',y))/M),backgroundColor:C.m,stack:'s'},
+    {label:'Rec. Propios',data:YY.map(y=>gM('recursos_propios',y)),backgroundColor:C.g,stack:'s'},
+    {label:'Otras Transf.',data:YY.map(y=>gM('otras_transf',y)),backgroundColor:C.t,stack:'s'},
+  ],true);
+  // Variación anual
+  const vars=YY.map((y,i)=>{if(i===0)return 0;const p=YY[i-1];return +(((g('ing_corrientes',y)-g('ing_corrientes',p))/Math.abs(g('ing_corrientes',p)))*100).toFixed(2);});
+  barChart('c-ing-var',YY,[{label:'Var. anual IC (%)',data:vars,backgroundColor:vars.map(v=>v>=0?'rgba(29,89,56,.7)':'rgba(199,30,29,.7)')}]);
+  // Tabla tres niveles
+  buildTablaIngresoNiveles(YY);
+}
+
+function buildTablaIngresoNiveles(YY){
+  const rows=[
+    {l:'① INGRESOS CORRIENTES (A)',fn:y=>g('ing_corrientes',y),cls:'grp',note:'Total IC'},
+    {l:'  Recursos Propios GADLP',fn:y=>g('recursos_propios',y),cls:'sub'},
+    {l:'    Venta Bienes y Servicios',fn:y=>g('venta_bs',y),cls:'sub2'},
+    {l:'    Ingresos Tributarios',fn:y=>g('tributarios',y),cls:'sub2'},
+    {l:'    Tasas y Cobros',fn:y=>g('tasas',y),cls:'sub2'},
+    {l:'    Otros Ingresos Propios',fn:y=>g('otros_propios',y),cls:'sub2'},
+    {l:'    Intereses y Rentas',fn:y=>g('intereses_prop',y),cls:'sub2'},
+    {l:'  Regalías (total)',fn:y=>g('regalias',y),cls:'sub'},
+    {l:'    Regalías Hidrocarburos',fn:y=>g('regalias_hidro',y),cls:'sub2'},
+    {l:'    Regalías Mineras',fn:y=>g('regalias_min',y),cls:'sub2'},
+    {l:'    Regalías Agropecuarias',fn:y=>g('regalias_agro',y),cls:'sub2'},
+    {l:'  IDH',fn:y=>g('idh',y),cls:'sub'},
+    {l:'  IEHD',fn:y=>g('iehd',y),cls:'sub'},
+    {l:'  TGN (exc. IDH/IEHD)',fn:y=>g('tgn',y),cls:'sub'},
+    {l:'  Otras Transferencias',fn:y=>g('otras_transf',y),cls:'sub'},
+    {l:'  — IC sin TGN —',fn:sinTGN,cls:'accent-b'},
+    {l:'② RECURSOS DE CAPITAL (D)',fn:y=>g('recursos_cap',y),cls:'grp'},
+    {l:'  Donaciones Capital',fn:y=>g('donaciones_cap',y),cls:'sub2'},
+    {l:'  Transf. Capital',fn:y=>g('transf_cap',y),cls:'sub2'},
+    {l:'③ FUENTES FINANCIERAS (I)',fn:y=>g('fuentes_fin',y),cls:'grp',note:'Deuda+Caja'},
+    {l:'  Dis. Inversión Financiera',fn:y=>g('dis_inv_fin',y),cls:'sub2'},
+    {l:'  Préstamos Internos',fn:y=>g('prestamos_int',y),cls:'sub2'},
+    {l:'  Préstamos Externos',fn:y=>g('prestamos_ext',y),cls:'sub2'},
+    {l:'  Otros Pasivos',fn:y=>g('otros_pasivos',y),cls:'sub2'},
+    {l:'TOTAL INGRESOS GADLP',fn:ingTotal,cls:'total'},
+  ];
+  document.getElementById('t-ing-niveles').innerHTML=
+    `<thead><tr><th>Componente</th>${YY.map(y=>`<th>${y}</th>`).join('')}<th>% '25</th></tr></thead>
+    <tbody>${rows.map(r=>{
+      const tot25=ingTotal(2025),v25=r.fn(2025);
+  makeSortable('t-ing-niveles');
+      const p=+(pc(v25,tot25));const bc=p>40?'r':p>20?'b':p>5?'o':'g';
+      const cells=YY.map(y=>{const v=r.fn(y);return`<td>${v>0.01?fp(v/M):'—'}</td>`;}).join('');
+      return`<tr class="${r.cls}"><td>${r.l}${r.note?` <span style="font-size:.58rem;color:var(--mute);font-weight:400">(${r.note})</span>`:''}</td>${cells}<td><span class="bdg ${bc}">${p}%</span></td></tr>`;
+    }).join('')}</tbody>`;
+}
+
+// ── TGN / AUTONOMÍA ──────────────────────
+function rTGN(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ic=g('ing_corrientes',y),tgn=g('tgn',y),stgn=sinTGN(y),prop=g('recursos_propios',y);
+  document.getElementById('ins-tgn').innerHTML=
+    `En <strong>${y}</strong>, el TGN aporta Bs <strong>${fm(tgn)} M</strong> — el <strong>${pc(tgn,ic)}%</strong> de los ingresos corrientes. Sin el TGN, el GADLP dispondría de Bs <strong>${fm(stgn)} M</strong> (${pc(stgn,ic)}%). Los recursos propios generados por el Departamento son solo Bs <strong>${fm(prop)} M</strong> (${pc(prop,ic)}%), lo que revela una <strong>dependencia estructural del Gobierno Central</strong>. La tendencia muestra que el TGN creció de 27.8% del IC en 2014 al 62.0% en 2025 — ganando 34 puntos porcentuales.`;
+  kband('kb-tgn',[
+    {l:'IC con TGN',v:fm(ic),c:'r',s:`Total · ${y}`},
+    {l:'IC sin TGN',v:fm(stgn),c:'b',s:`${pc(stgn,ic)}% del IC`},
+    {l:'Solo Rec. Propios',v:fm(prop),c:'g',s:`${pc(prop,ic)}% del IC`},
+    {l:'TGN',v:fm(tgn),c:'',s:`${pc(tgn,ic)}% del IC`},
+    {l:'Regalías',v:fm(g('regalias',y)),c:'o',s:`${pc(g('regalias',y),ic)}% del IC`},
+    {l:'IDH + IEHD',v:fm(g('idh',y)+g('iehd',y)),c:'t',s:`${pc(g('idh',y)+g('iehd',y),ic)}% del IC`},
+  ]);
+  // Tres niveles
+  barChart('c-tgn-niveles',YY,[
+    {label:'IC con TGN',data:YY.map(y=>gM('ing_corrientes',y)),backgroundColor:'rgba(24,61,106,.55)'},
+    {label:'IC sin TGN',data:YY.map(y=>sinTGN(y)/M),backgroundColor:C.R},
+    {label:'Solo Rec. Propios',data:YY.map(y=>gM('recursos_propios',y)),backgroundColor:C.g},
+  ]);
+  // TGN %
+  lineChart('c-tgn-pct',YY,[
+    {label:'TGN / IC (%)',data:YY.map(y=>+pc(g('tgn',y),g('ing_corrientes',y))),borderColor:C.b,backgroundColor:C.bp,fill:true,tension:.3,pointRadius:4,pointBackgroundColor:C.b},
+    {label:'Sin TGN / IC (%)',data:YY.map(y=>+pc(sinTGN(y),g('ing_corrientes',y))),borderColor:C.R,fill:false,tension:.3,pointRadius:4,borderDash:[5,3],pointBackgroundColor:C.R},
+  ]);
+  barChart('c-tgn-abs',YY,[{label:'TGN',data:YY.map(y=>gM('tgn',y)),backgroundColor:C.b}]);
+  lineChart('c-tgn-sintgn',YY,[{label:'IC sin TGN',data:YY.map(y=>sinTGN(y)/M),borderColor:C.R,backgroundColor:C.Rp,fill:true,tension:.3,pointRadius:4,pointBackgroundColor:C.R}],'M');
+  lineChart('c-tgn-prop',YY,[{label:'Rec. Propios',data:YY.map(y=>gM('recursos_propios',y)),borderColor:C.g,backgroundColor:C.gp,fill:true,tension:.3,pointRadius:4,pointBackgroundColor:C.g}],'M');
+  // 100% stacked TGN vs SinTGN
+  pie100('c-tgn-comp100',YY,[
+    {label:'TGN (%)',data:YY.map(y=>+pc(g('tgn',y),g('ing_corrientes',y))),backgroundColor:C.b,stack:'c'},
+    {label:'Sin TGN (%)',data:YY.map(y=>+pc(sinTGN(y),g('ing_corrientes',y))),backgroundColor:C.R,stack:'c'},
+  ]);
+  // Desglose sin TGN
+  barChart('c-tgn-detalle',YY,[
+    {label:'Regalías Hidro.',data:YY.map(y=>gM('regalias_hidro',y)),backgroundColor:C.R,stack:'d'},
+    {label:'Regalías Min/Agro.',data:YY.map(y=>(g('regalias_min',y)+g('regalias_agro',y))/M),backgroundColor:C.m,stack:'d'},
+    {label:'IDH',data:YY.map(y=>gM('idh',y)),backgroundColor:C.o,stack:'d'},
+    {label:'IEHD',data:YY.map(y=>gM('iehd',y)),backgroundColor:C.ol,stack:'d'},
+    {label:'Rec. Propios',data:YY.map(y=>gM('recursos_propios',y)),backgroundColor:C.g,stack:'d'},
+    {label:'Otras Transf.',data:YY.map(y=>gM('otras_transf',y)),backgroundColor:C.t,stack:'d'},
+  ],true);
+  // tabla autonomía
+  const rows=[
+    {l:'IC con TGN',fn:y=>g('ing_corrientes',y),cls:'grp'},
+    {l:'TGN (exc. IDH/IEHD)',fn:y=>g('tgn',y),cls:'sub'},
+    {l:'IC sin TGN',fn:sinTGN,cls:'accent-b'},
+    {l:'  Regalías (total)',fn:y=>g('regalias',y),cls:'sub'},
+    {l:'  IDH',fn:y=>g('idh',y),cls:'sub'},
+    {l:'  IEHD',fn:y=>g('iehd',y),cls:'sub'},
+    {l:'  Rec. Propios',fn:y=>g('recursos_propios',y),cls:'sub'},
+    {l:'  Otras Transf.',fn:y=>g('otras_transf',y),cls:'sub'},
+    {l:'Solo Rec. Propios GADLP',fn:y=>g('recursos_propios',y),cls:'accent-g'},
+    {l:'TGN / IC (%)',fn:y=>+pc(g('tgn',y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'Sin TGN / IC (%)',fn:y=>+pc(sinTGN(y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'Rec. Propios / IC (%)',fn:y=>+pc(g('recursos_propios',y),g('ing_corrientes',y)),cls:'sub',pct:true},
+  ];
+  document.getElementById('t-tgn').innerHTML=
+    `<thead><tr><th>Indicador</th>${YY.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>{
+      const cells=YY.map(y=>{const v=r.fn(y);return`<td>${v>0.01?(r.pct?fp(v)+'%':fp(v/M)):'—'}</td>`;}).join('');
+  makeSortable('t-tgn');
+      return`<tr class="${r.cls}"><td>${r.l}</td>${cells}</tr>`;
+    }).join('')}</tbody>`;
+}
+
+// ── RECURSOS NATURALES ──────────────────────────────
+function rHidro(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ic=g('ing_corrientes',y), hd=bloqueHidro(y), rn=rrnn(y);
+  const pctH=+pc(hd,ic), pctRN=+pc(rn,ic);
+  document.getElementById('ins-hidro').innerHTML=
+    `En <strong>${y}</strong>, el bloque hidrocarburífero (Rag.Hidro + IDH + IEHD) totaliza Bs <strong>${fm(hd)} M</strong> — <strong>${pctH}%</strong> del IC. El total de Recursos Naturales (incl. Rag.Mineras y Agropecuarias) es Bs <strong>${fm(rn)} M</strong> (<strong>${pctRN}%</strong> del IC). El IDH cayó de Bs ${fm(g('idh',2014))} M (2014) a Bs ${fm(g('idh',2025))} M (2025) — una caída del ${(-(g('idh',2025)-g('idh',2014))/g('idh',2014)*100).toFixed(1)}%. Las regalías hidrocarburíferas representan el ${pc(g('regalias_hidro',y),hd)}% del bloque hidro en ${y}.`;
+  kband('kb-hidro',[
+    {l:'Bloque Hidro. Total',v:fm(hd),c:'r',s:`${pctH}% del IC · Rag+IDH+IEHD`},
+    {l:'Regalías Hidro.',v:fm(g('regalias_hidro',y)),c:'r',s:`${pc(g('regalias_hidro',y),ic)}% IC`},
+    {l:'IDH',v:fm(g('idh',y)),c:'b',s:`${pc(g('idh',y),ic)}% IC`},
+    {l:'IEHD',v:fm(g('iehd',y)),c:'t',s:`${pc(g('iehd',y),ic)}% IC`},
+    {l:'Regalías Mineras',v:fm(g('regalias_min',y)),c:'o',s:`${pc(g('regalias_min',y),ic)}% IC`},
+    {l:'Regalías Agropecuarias',v:fm(g('regalias_agro',y)),c:'g',s:`${pc(g('regalias_agro',y),ic)}% IC`},
+  ]);
+  // Primer gráfico: SOLO bloque hidrocarburífero (sin min/agro)
+  barChart('c-h-total',YY,[
+    {label:'Regalías Hidro.',data:YY.map(y=>gM('regalias_hidro',y)),backgroundColor:C.R,stack:'h'},
+    {label:'IDH',data:YY.map(y=>gM('idh',y)),backgroundColor:C.o,stack:'h'},
+    {label:'IEHD',data:YY.map(y=>gM('iehd',y)),backgroundColor:C.ol,stack:'h'},
+  ],true);
+  // % hidro puro sobre IC
+  lineChart('c-h-pct',YY,[
+    {label:'Bloque Hidro./IC (%)',data:YY.map(y=>+pc(bloqueHidro(y),g('ing_corrientes',y))),borderColor:C.R,backgroundColor:C.Rp,fill:true,tension:.35,pointRadius:5,pointBackgroundColor:C.R},
+  ]);
+  // Regalías por tipo: hidro + min + agro
+  barChart('c-h-rag',YY,[
+    {label:'Hidro.',data:YY.map(y=>gM('regalias_hidro',y)),backgroundColor:C.R,stack:'r'},
+    {label:'Min.',data:YY.map(y=>gM('regalias_min',y)),backgroundColor:C.o,stack:'r'},
+    {label:'Agro.',data:YY.map(y=>gM('regalias_agro',y)),backgroundColor:C.ol,stack:'r'},
+  ],true);
+  barChart('c-h-idh',YY,[{label:'IDH',data:YY.map(y=>gM('idh',y)),backgroundColor:C.o}]);
+  barChart('c-h-iehd',YY,[{label:'IEHD',data:YY.map(y=>gM('iehd',y)),backgroundColor:C.t}]);
+  // Composición % del bloque RRNN total (todas las regalías + IDH + IEHD = 100%)
+  mk('c-h-comp',{type:'bar',data:{labels:YY,datasets:[
+    {label:'Rag.Hidro.',data:YY.map(y=>{const h=rrnn(y);return h?+pc(g('regalias_hidro',y),h):0;}),backgroundColor:C.R,stack:'c'},
+    {label:'IDH',data:YY.map(y=>{const h=rrnn(y);return h?+pc(g('idh',y),h):0;}),backgroundColor:C.o,stack:'c'},
+    {label:'IEHD',data:YY.map(y=>{const h=rrnn(y);return h?+pc(g('iehd',y),h):0;}),backgroundColor:C.t,stack:'c'},
+    {label:'Rag.Min.',data:YY.map(y=>{const h=rrnn(y);return h?+pc(g('regalias_min',y),h):0;}),backgroundColor:C.m,stack:'c'},
+    {label:'Rag.Agro.',data:YY.map(y=>{const h=rrnn(y);return h?+pc(g('regalias_agro',y),h):0;}),backgroundColor:C.gl,stack:'c'},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9,padding:5}},tooltip:{...TTP,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fp(ctx.raw)}%`}}},scales:{x:{stacked:true,...GR()},y:{stacked:true,min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+  lineChart('c-h-idh-pct',YY,[
+    {label:'IDH/IC',data:YY.map(y=>+pc(g('idh',y),g('ing_corrientes',y))),borderColor:C.o,backgroundColor:C.op,fill:true,tension:.3,pointRadius:4,pointBackgroundColor:C.o},
+    {label:'IEHD/IC',data:YY.map(y=>+pc(g('iehd',y),g('ing_corrientes',y))),borderColor:C.t,fill:false,tension:.3,pointRadius:4,pointBackgroundColor:C.t},
+    {label:'(IDH+IEHD)/IC',data:YY.map(y=>+pc(g('idh',y)+g('iehd',y),g('ing_corrientes',y))),borderColor:C.m,fill:false,tension:.3,borderDash:[4,3],pointRadius:4},
+  ]);
+  const rows=[
+    {l:'Regalías Hidrocarburíferas',fn:y=>g('regalias_hidro',y),cls:'grp'},
+    {l:'Regalías Mineras',fn:y=>g('regalias_min',y),cls:'sub'},
+    {l:'Regalías Agropecuarias',fn:y=>g('regalias_agro',y),cls:'sub'},
+    {l:'Total Regalías (Hidro + Min + Agro)',fn:y=>g('regalias',y),cls:'grp'},
+    {l:'IDH — Imp. Directo Hidrocarburos',fn:y=>g('idh',y),cls:'grp'},
+    {l:'IEHD — Imp. Especial Hidrocarburos',fn:y=>g('iehd',y),cls:'grp'},
+    {l:'TOTAL BLOQUE HIDROCARBURÍFERO (Rag.Hidro+IDH+IEHD)',fn:bloqueHidro,cls:'total'},
+    {l:'TOTAL BLOQUE RRNN (Todas Rag.+IDH+IEHD)',fn:rrnn,cls:'accent-g'},
+    {l:'Bloque Hidro./IC (%)',fn:y=>+pc(bloqueHidro(y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'RRNN Total/IC (%)',fn:y=>+pc(rrnn(y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'Rag. Total/IC (%)',fn:y=>+pc(g('regalias',y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'IDH/IC (%)',fn:y=>+pc(g('idh',y),g('ing_corrientes',y)),cls:'sub',pct:true},
+    {l:'IEHD/IC (%)',fn:y=>+pc(g('iehd',y),g('ing_corrientes',y)),cls:'sub',pct:true},
+  ];
+  document.getElementById('t-hidro').innerHTML=
+    `<thead><tr><th>Componente</th>${YY.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>{const cells=YY.map(y=>{const v=r.fn(y);return`<td>${v>0.01?(r.pct?fp(v)+'%':fp(v/M)):'—'}</td>`;}).join('');return`<tr class="${r.cls}"><td>${r.l}</td>${cells}</tr>`;}).join('')}</tbody>`;
+  makeSortable('t-hidro');
+}
+
+// ── GASTO ──────────────────────────────
+function rGasto(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ic=g('ing_corrientes',y),gc=g('gastos_corrientes',y),ah=g('ahorro_corriente',y),rem=SE.remun[y]||0;
+  document.getElementById('ins-gasto').innerHTML=
+    `En <strong>${y}</strong>, el gasto corriente absorbe el <strong>${pc(gc,ic)}%</strong> de los IC. Las remuneraciones son Bs <strong>${fm(rem)} M</strong> (${pc(rem,gc)}% del GC), siendo el componente más rígido. El ahorro corriente alcanzó Bs <strong>${fm(ah)} M</strong> (${pc(ah,ic)}% del IC). La tendencia muestra una compresión del margen de ahorro de 31.1% (2014) a ${pc(ah,ic)}% (2025).`;
+  kband('kb-gasto',[
+    {l:'Gastos Corrientes',v:fm(gc),c:'r',s:`${pc(gc,ic)}% del IC`},
+    {l:'Remuneraciones',v:fm(rem),c:'',s:`${pc(rem,gc)}% del GC`},
+    {l:'Bienes y Servicios',v:fm(SE.bienes[y]||0),c:'',s:`${pc(SE.bienes[y]||0,gc)}% del GC`},
+    {l:'Transf. Corrientes',v:fm(SE.transfc[y]||0),c:'',s:`${pc(SE.transfc[y]||0,gc)}% del GC`},
+    {l:'Gastos de Capital',v:fm(g('gastos_cap',y)),c:'b',s:'Inversión'},
+    {l:'Ahorro Corriente',v:fm(ah),c:ah>=0?'g':'r',s:'C = A − B'},
+  ]);
+  barChart('c-g-icgc',YY,[{label:'Ing. Corrientes',data:YY.map(y=>gM('ing_corrientes',y)),backgroundColor:'rgba(24,61,106,.6)'},{label:'Gastos Corrientes',data:YY.map(y=>gM('gastos_corrientes',y)),backgroundColor:'rgba(199,30,29,.6)'}]);
+  barChart('c-g-comp',YY,[
+    {label:'Remuneraciones',data:YY.map(y=>(SE.remun[y]||0)/M),backgroundColor:C.R,stack:'g'},
+    {label:'Bienes y Servicios',data:YY.map(y=>(SE.bienes[y]||0)/M),backgroundColor:C.b,stack:'g'},
+    {label:'Transf. Corrientes',data:YY.map(y=>(SE.transfc[y]||0)/M),backgroundColor:C.o,stack:'g'},
+    {label:'Otros',data:YY.map(y=>Math.max(0,g('gastos_corrientes',y)-(SE.remun[y]||0)-(SE.bienes[y]||0)-(SE.transfc[y]||0))/M),backgroundColor:C.t,stack:'g'},
+  ],true);
+  comboChart('c-g-ahorro',YY,
+    [{label:'Ahorro Corriente',data:YY.map(y=>gM('ahorro_corriente',y)),backgroundColor:YY.map(y=>g('ahorro_corriente',y)>=0?'rgba(29,89,56,.72)':'rgba(199,30,29,.72)'),borderRadius:3}],
+    [{label:'Resultado Fin. Neto',data:YY.map(y=>gM('resultado_fin',y)),borderColor:C.o,pointBackgroundColor:C.o}]
+  );
+  barChart('c-g-cap',YY,[{label:'Gastos Capital',data:YY.map(y=>gM('gastos_cap',y)),backgroundColor:'rgba(199,30,29,.6)'},{label:'Recursos Capital',data:YY.map(y=>gM('recursos_cap',y)),backgroundColor:'rgba(29,89,56,.7)'}]);
+  lineRatio('c-g-gcic',YY,y=>+pc(g('gastos_corrientes',y),g('ing_corrientes',y)),'GC/IC (%)',C.R);
+  lineRatio('c-g-rem',YY,y=>{const gc=g('gastos_corrientes',y);return gc?+((SE.remun[y]||0)/gc*100).toFixed(2):0;},'Rem./GC (%)',C.m);
+  barChart('c-g-transf',YY,[{label:'Transf. Corrientes',data:YY.map(y=>(SE.transfc[y]||0)/M),backgroundColor:C.o}]);
+}
+
+// ── DEUDA ──────────────────────────────
+function rDeuda(){
+  const YY=lbs(), y=selY==='all'?2025:parseInt(selY);
+  const ff=g('fuentes_fin',y),aj=g('aplicaciones_fin',y),ic=g('ing_corrientes',y);
+  const pi=g('prestamos_int',y),pe=g('prestamos_ext',y),op=g('otros_pasivos',y),dif=g('dis_inv_fin',y);
+  const am=g('amort_deuda',y);
+  document.getElementById('ins-deuda').innerHTML=
+    `En <strong>${y}</strong>, las fuentes financieras totalizan Bs <strong>${fm(ff)} M</strong>: préstamos int. Bs ${fm(pi)} M, ext. Bs ${fm(pe)} M, otros pasivos Bs ${fm(op)} M, dis. inv. fin. Bs ${fm(dif)} M. Las aplicaciones suman Bs <strong>${fm(aj)} M</strong>; la amortización de deuda representa el <strong>${pc(am,aj)}%</strong>. Las fuentes financieras equivalen al <strong>${pc(ff,ic)}%</strong> de los ingresos corrientes.`;
+  kband('kb-deuda',[
+    {l:'Fuentes Financieras',v:fm(ff),c:'b',s:`${pc(ff,ic)}% del IC`},
+    {l:'Préstamos Internos',v:fm(pi),c:'b',s:`${pc(pi,ff)}% de FF`},
+    {l:'Préstamos Externos',v:fm(pe),c:'t',s:`${pc(pe,ff)}% de FF`},
+    {l:'Otros Pasivos',v:fm(op),c:'o',s:`${pc(op,ff)}% de FF`},
+    {l:'Dis. Inv. Financiera',v:fm(dif),c:'g',s:'Uso de caja'},
+    {l:'Aplicaciones Fin.',v:fm(aj),c:'r',s:'Total J'},
+    {l:'Amort. Deuda',v:fm(am),c:'r',s:`${pc(am,aj)}% de AF`},
+  ]);
+  barChart('c-d-fuentes',YY,[
+    {label:'Dis.Inv.Fin.',data:YY.map(y=>gM('dis_inv_fin',y)),backgroundColor:C.g,stack:'f'},
+    {label:'Préstamos Int.',data:YY.map(y=>gM('prestamos_int',y)),backgroundColor:C.b,stack:'f'},
+    {label:'Préstamos Ext.',data:YY.map(y=>gM('prestamos_ext',y)),backgroundColor:C.t,stack:'f'},
+    {label:'Otros Pasivos',data:YY.map(y=>gM('otros_pasivos',y)),backgroundColor:C.o,stack:'f'},
+  ],true);
+  barChart('c-d-aplic',YY,[
+    {label:'Amort. Deuda',data:YY.map(y=>gM('amort_deuda',y)),backgroundColor:C.R,stack:'a'},
+    {label:'Inv. Financiera',data:YY.map(y=>gM('inv_financiera',y)),backgroundColor:C.b,stack:'a'},
+  ],true);
+  barChart('c-d-neto',YY,[
+    {label:'Nuevos Préstamos',data:YY.map(y=>(gM('prestamos_int',y)+gM('prestamos_ext',y))),backgroundColor:'rgba(24,61,106,.7)'},
+    {label:'Amortizaciones',data:YY.map(y=>-gM('amort_deuda',y)),backgroundColor:'rgba(199,30,29,.6)'},
+  ]);
+  barChart('c-d-caja',YY,[
+    {label:'Dis.Inv.Fin. (fuente)',data:YY.map(y=>gM('dis_inv_fin',y)),backgroundColor:C.g},
+    {label:'Inc.Inv.Fin. (aplic.)',data:YY.map(y=>-gM('inv_financiera',y)),backgroundColor:C.R},
+  ]);
+  barChart('c-d-float',YY,[{label:'Amort. Deuda Flotante',data:YY.map(y=>(SE.float[y]||0)/M),backgroundColor:C.m}]);
+  lineRatio('c-d-ffic',YY,y=>+pc(g('fuentes_fin',y),g('ing_corrientes',y)),'FF/IC (%)',C.b);
+  lineRatio('c-d-amff',YY,y=>{const ff=g('fuentes_fin',y);return ff?+pc(g('amort_deuda',y),ff):0;},'Amort./FF (%)',C.R);
+  // tabla total
+  const rows=[
+    {l:'IC — Ingresos Corrientes (A)',fn:y=>g('ing_corrientes',y),cls:'grp'},
+    {l:'  Rec. Propios',fn:y=>g('recursos_propios',y),cls:'sub2'},
+    {l:'  Regalías',fn:y=>g('regalias',y),cls:'sub2'},
+    {l:'  IDH',fn:y=>g('idh',y),cls:'sub2'},
+    {l:'  IEHD',fn:y=>g('iehd',y),cls:'sub2'},
+    {l:'  TGN',fn:y=>g('tgn',y),cls:'sub2'},
+    {l:'  Otras Transf.',fn:y=>g('otras_transf',y),cls:'sub2'},
+    {l:'RC — Recursos de Capital (D)',fn:y=>g('recursos_cap',y),cls:'grp'},
+    {l:'FF — Fuentes Financieras (I)',fn:y=>g('fuentes_fin',y),cls:'grp'},
+    {l:'  Dis.Inv.Fin.',fn:y=>g('dis_inv_fin',y),cls:'sub2'},
+    {l:'  Préstamos Int.',fn:y=>g('prestamos_int',y),cls:'sub2'},
+    {l:'  Préstamos Ext.',fn:y=>g('prestamos_ext',y),cls:'sub2'},
+    {l:'  Otros Pasivos',fn:y=>g('otros_pasivos',y),cls:'sub2'},
+    {l:'TOTAL INGRESOS GADLP (IC+RC+FF)',fn:ingTotal,cls:'total'},
+    {l:'IC / Total (%)',fn:y=>+pc(g('ing_corrientes',y),ingTotal(y)),cls:'sub',pct:true},
+    {l:'FF / Total (%)',fn:y=>+pc(g('fuentes_fin',y),ingTotal(y)),cls:'sub',pct:true},
+  ];
+  document.getElementById('t-deuda-total').innerHTML=
+    `<thead><tr><th>Componente</th>${YY.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>{const cells=YY.map(y=>{const v=r.fn(y);return`<td>${v>0.01?(r.pct?fp(v)+'%':fp(v/M)):'—'}</td>`;}).join('');return`<tr class="${r.cls}"><td>${r.l}</td>${cells}</tr>`;}).join('')}</tbody>`;
+  makeSortable('t-deuda-total');
+}
+
+// ── RATIOS ──────────────────────────────
+function rRatios(){
+  const YY=[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]; // siempre histórico completo
+  const R={
+    dh:y=>{const ic=g('ing_corrientes',y);return ic?+(hidro(y)/ic*100).toFixed(2):0;},
+    dt:y=>{const ic=g('ing_corrientes',y);return ic?+(g('tgn',y)/ic*100).toFixed(2):0;},
+    dtot:y=>{const ic=g('ing_corrientes',y);return ic?+((g('tgn',y)+hidro(y))/ic*100).toFixed(2):0;},
+    af:y=>{const ic=g('ing_corrientes',y);return ic?+(g('recursos_propios',y)/ic*100).toFixed(2):0;},
+    stgn:y=>{const ic=g('ing_corrientes',y);return ic?+(sinTGN(y)/ic*100).toFixed(2):0;},
+    rag:y=>{const ic=g('ing_corrientes',y);return ic?+(g('regalias',y)/ic*100).toFixed(2):0;},
+    ah:y=>{const ic=g('ing_corrientes',y);return ic?+(g('ahorro_corriente',y)/ic*100).toFixed(2):0;},
+    gcic:y=>{const ic=g('ing_corrientes',y);return ic?+(g('gastos_corrientes',y)/ic*100).toFixed(2):0;},
+    rem:y=>{const gc=g('gastos_corrientes',y);return gc?+((SE.remun[y]||0)/gc*100).toFixed(2):0;},
+    cap:y=>{const ic=g('ing_corrientes',y);return ic?+(g('gastos_cap',y)/ic*100).toFixed(2):0;},
+    ffic:y=>{const ic=g('ing_corrientes',y);return ic?+(g('fuentes_fin',y)/ic*100).toFixed(2):0;},
+    am:y=>{const ff=g('fuentes_fin',y);return ff?+(g('amort_deuda',y)/ff*100).toFixed(2):0;},
+  };
+  const ln=(id,fn,lbl,clr)=>lineRatio(id,YY,fn,lbl,clr);
+  ln('c-r-dh',R.dh,'Dep.Hidro.(%)',C.R); ln('c-r-dt',R.dt,'Dep.TGN.(%)',C.b); ln('c-r-dtot',R.dtot,'Dep.Total(%)',C.p);
+  ln('c-r-af',R.af,'Autofin.(%)',C.g); ln('c-r-stgn',R.stgn,'Sin TGN/IC(%)',C.bl); ln('c-r-rag',R.rag,'Regalías/IC(%)',C.o);
+  ln('c-r-ah',R.ah,'Ahorro/IC(%)',C.tl); ln('c-r-gcic',R.gcic,'GC/IC(%)',C.R); ln('c-r-rem',R.rem,'Rem/GC(%)',C.m);
+  ln('c-r-cap',R.cap,'Cap/IC(%)',C.o); ln('c-r-ffic',R.ffic,'FF/IC(%)',C.b); ln('c-r-am',R.am,'Amort/FF(%)',C.R);
+
+  // Matriz completa
+  const defs=[
+    {l:'A. Dep. Hidrocarbúrica (%)',fn:R.dh,inv:true},
+    {l:'A. Dep. del TGN (%)',fn:R.dt,inv:true},
+    {l:'A. Dep. Total (TGN+Hidro) (%)',fn:R.dtot,inv:true},
+    {l:'B. Autofinanciamiento (%)',fn:R.af,inv:false},
+    {l:'B. Ingresos sin TGN / IC (%)',fn:R.stgn,inv:false},
+    {l:'B. Regalías / IC (%)',fn:R.rag,inv:false},
+    {l:'C. Margen Ahorro Corr. (%)',fn:R.ah,inv:false},
+    {l:'C. GC / IC — presión operativa (%)',fn:R.gcic,inv:true},
+    {l:'C. Remuneraciones / GC (%)',fn:R.rem,inv:true},
+    {l:'D. Inversión Capital / IC (%)',fn:R.cap,inv:true},
+    {l:'D. Fuentes Fin. / IC (%)',fn:R.ffic,inv:true},
+    {l:'D. Amort. Deuda / FF (%)',fn:R.am,inv:true},
+  ];
+  const hc=(v,inv,all)=>{const mn=Math.min(...all),mx=Math.max(...all);const n=mx===mn?.5:(v-mn)/(mx-mn);const s=inv?n:1-n;return s<.2?'h0':s<.4?'h1':s<.6?'h2':s<.8?'h3':'h4';};
+  document.getElementById('t-ratios').innerHTML=
+    `<thead><tr><th>Ratio</th>${YY.map(y=>`<th>${y}</th>`).join('')}<th style="min-width:64px">Tendencia</th></tr></thead>
+    <tbody>${defs.map((r,i)=>{
+      const vals=YY.map(r.fn);
+  makeSortable('t-ratios');
+      const sep=i>0&&r.l.charAt(0)!==defs[i-1].l.charAt(0)?'class="grp-r"':'';
+      const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
+      const W=62,H=22,pad=3;
+      const pts=vals.map((v,i)=>(pad+i*(W-pad*2)/(vals.length-1)).toFixed(1)+','+(H-pad-(v-mn)/rng*(H-pad*2)).toFixed(1)).join(' ');
+      const lc=r.inv?(vals[vals.length-1]>vals[0]?'#c71e1d':'#1d5938'):(vals[vals.length-1]>vals[0]?'#1d5938':'#c71e1d');
+      const lx=(pad+(vals.length-1)*(W-pad*2)/(vals.length-1)).toFixed(1);
+      const ly=(H-pad-(vals[vals.length-1]-mn)/rng*(H-pad*2)).toFixed(1);
+      const spark='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="display:block"><polyline points="'+pts+'" fill="none" stroke="'+lc+'" stroke-width="1.5" stroke-linejoin="round"/><circle cx="'+lx+'" cy="'+ly+'" r="2.5" fill="'+lc+'"/></svg>';
+      return '<tr '+(sep)+'><td class="lbl">'+r.l+'</td>'+YY.map((y,j)=>'<td class="'+hc(vals[j],r.inv,vals)+'">'+fp(vals[j])+'%</td>').join('')+'<td style="padding:2px 6px">'+spark+'</td></tr>';
+    }).join('')}</tbody>`;
+}
+
+// ── TABLA FULL ──────────────────────────
+function rTabla(){
+  const rows=[
+    {l:'INGRESOS CORRIENTES (A)',fn:y=>g('ing_corrientes',y),cls:'grp'},
+    {l:'  Recursos Propios',fn:y=>g('recursos_propios',y),cls:'sub'},
+    {l:'    Venta B&S',fn:y=>g('venta_bs',y),cls:'sub2'},
+    {l:'    Tributarios',fn:y=>g('tributarios',y),cls:'sub2'},
+    {l:'    Tasas',fn:y=>g('tasas',y),cls:'sub2'},
+    {l:'    Otros Propios',fn:y=>g('otros_propios',y),cls:'sub2'},
+    {l:'  Regalías',fn:y=>g('regalias',y),cls:'sub'},
+    {l:'    Rag. Hidrocarburos',fn:y=>g('regalias_hidro',y),cls:'sub2'},
+    {l:'    Rag. Mineras',fn:y=>g('regalias_min',y),cls:'sub2'},
+    {l:'    Rag. Agropecuarias',fn:y=>g('regalias_agro',y),cls:'sub2'},
+    {l:'  IDH',fn:y=>g('idh',y),cls:'sub'},
+    {l:'  IEHD',fn:y=>g('iehd',y),cls:'sub'},
+    {l:'  TGN (exc. IDH/IEHD)',fn:y=>g('tgn',y),cls:'sub'},
+    {l:'  Otras Transferencias',fn:y=>g('otras_transf',y),cls:'sub'},
+    {l:'  ■ IC sin TGN',fn:sinTGN,cls:'accent-b'},
+    {l:'GASTOS CORRIENTES (B)',fn:y=>g('gastos_corrientes',y),cls:'grp'},
+    {l:'  Remuneraciones',fn:y=>SE.remun[y]||0,cls:'sub'},
+    {l:'  Bienes y Servicios',fn:y=>SE.bienes[y]||0,cls:'sub'},
+    {l:'  Transf. Corrientes',fn:y=>SE.transfc[y]||0,cls:'sub'},
+    {l:'AHORRO CORRIENTE (C = A−B)',fn:y=>g('ahorro_corriente',y),cls:'total'},
+    {l:'RECURSOS DE CAPITAL (D)',fn:y=>g('recursos_cap',y),cls:'grp'},
+    {l:'GASTOS DE CAPITAL (E)',fn:y=>g('gastos_cap',y),cls:'grp'},
+    {l:'SALDO CAPITAL (F = D−E)',fn:y=>g('recursos_cap',y)-g('gastos_cap',y),cls:'accent-g'},
+    {l:'RESULTADO FINANCIERO NETO (G = C+F)',fn:y=>g('resultado_fin',y),cls:'total'},
+    {l:'FUENTES FINANCIERAS (I)',fn:y=>g('fuentes_fin',y),cls:'grp'},
+    {l:'  Dis. Inv. Financiera',fn:y=>g('dis_inv_fin',y),cls:'sub'},
+    {l:'  Préstamos Internos',fn:y=>g('prestamos_int',y),cls:'sub'},
+    {l:'  Préstamos Externos',fn:y=>g('prestamos_ext',y),cls:'sub'},
+    {l:'  Otros Pasivos',fn:y=>g('otros_pasivos',y),cls:'sub'},
+    {l:'APLICACIONES FINANCIERAS (J)',fn:y=>g('aplicaciones_fin',y),cls:'grp'},
+    {l:'  Amort. Deuda',fn:y=>g('amort_deuda',y),cls:'sub'},
+    {l:'  Amort. Deuda Flotante',fn:y=>SE.float[y]||0,cls:'sub2'},
+    {l:'  Inversión Financiera',fn:y=>g('inv_financiera',y),cls:'sub'},
+    {l:'FINANCIAMIENTO NETO (H = I−J)',fn:y=>g('fuentes_fin',y)-g('aplicaciones_fin',y),cls:'total'},
+  ];
+  const YY=lbs();
+  document.getElementById('t-full').innerHTML=
+    `<thead><tr><th>Variable</th>${YY.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>{
+      const cells=YY.map(y=>{const v=r.fn(y);const neg=v<0;return`<td style="${neg?'color:var(--R)':''}">${Math.abs(v)>0.005?fp(v/M,2):'—'}</td>`;}).join('');
+  makeSortable('t-full');
+      return`<tr class="${r.cls}"><td>${r.l}</td>${cells}</tr>`;
+    }).join('')}</tbody>`;
+}
+
+
+// ── DÉFICIT ──────────────────────────────
+function rDeficit(){
+  const ALL=[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+  const YY=lbs();
+  const y=selY==='all'?2025:parseInt(selY);
+
+  // The three deficit measures (all negative = deficit)
+  const defG    = y2=>g('resultado_fin',y2);                                       // G
+  const defCaja = y2=>g('resultado_fin',y2)-g('amort_deuda',y2);                   // G - amort
+  const defBruto= y2=>-(g('fuentes_fin',y2));                                      // = -(I) = G - amort - inc.inv.fin
+
+  const ic=g('ing_corrientes',y);
+  const dG=defG(y), dC=defCaja(y), dB=defBruto(y);
+  const amort=g('amort_deuda',y), invFin=g('inv_financiera',y), ff=g('fuentes_fin',y);
+
+  kband('kb-def',[
+    {l:'① Result. Fin. Neto (G)',v:fm(dG),c:dG>=0?'g':'r',s:`G = C + F · ${y}`},
+    {l:'Amortización Deuda',v:fm(-amort),c:'o',s:`${pc(amort,ff)}% de Fuentes Fin.`},
+    {l:'② Déficit de Caja',v:fm(dC),c:dC>=0?'g':'r',s:`G − Amort. · ${y}`},
+    {l:'Inc. Inversión Fin.',v:fm(-invFin),c:'b',s:`acumulación caja/bancos`},
+    {l:'③ Déficit Bruto Fin.',v:fm(dB),c:dB>=0?'g':'r',s:`= −Fuentes Financieras`},
+    {l:'Fuentes Financieras (I)',v:fm(ff),c:'t',s:`verificación: I = −③`},
+    {l:'Déficit Caja / IC',v:pc(Math.abs(dC),ic)+'%',c:Math.abs(dC)/ic>.1?'r':'o',s:`intensidad relativa`},
+  ]);
+
+  // Chart 1: tres criterios
+  mk('c-def-tres',{type:'bar',data:{labels:YY,datasets:[
+    {label:'① G (Res. Fin. Neto)',data:YY.map(y=>defG(y)/M),backgroundColor:YY.map(y=>defG(y)>=0?'rgba(29,89,56,.7)':'rgba(199,30,29,.7)'),type:'bar'},
+    {label:'② Déficit de Caja',data:YY.map(y=>defCaja(y)/M),borderColor:C.o,backgroundColor:'transparent',type:'line',fill:false,tension:.3,pointRadius:5,pointBackgroundColor:C.o,borderWidth:2},
+    {label:'③ Déficit Bruto Fin.',data:YY.map(y=>defBruto(y)/M),borderColor:C.b,backgroundColor:'transparent',type:'line',fill:false,tension:.3,pointRadius:5,pointBackgroundColor:C.b,borderWidth:2,borderDash:[5,3]},
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:12,padding:7}},tooltip:TTP},
+    scales:{x:GR(),y:YT()}}});
+
+  // Chart 2: % IC
+  lineChart('c-def-pct',YY,[
+    {label:'G / IC (%)',data:YY.map(y=>+(defG(y)/g('ing_corrientes',y)*100).toFixed(2)),borderColor:C.R,backgroundColor:C.Rp,fill:true,tension:.3,pointRadius:4,pointBackgroundColor:C.R},
+    {label:'Déf.Caja / IC (%)',data:YY.map(y=>+(defCaja(y)/g('ing_corrientes',y)*100).toFixed(2)),borderColor:C.o,fill:false,tension:.3,pointRadius:4,pointBackgroundColor:C.o,borderDash:[4,2]},
+    {label:'Déf.Bruto / IC (%)',data:YY.map(y=>+(defBruto(y)/g('ing_corrientes',y)*100).toFixed(2)),borderColor:C.b,fill:false,tension:.3,pointRadius:4,pointBackgroundColor:C.b,borderDash:[2,3]},
+  ]);
+
+  // Chart 3: descomposición déficit caja (apilado, todos negativos)
+  barChart('c-def-comp',YY,[
+    {label:'G (Res.Fin.Neto)',data:YY.map(y=>defG(y)/M),backgroundColor:YY.map(y=>defG(y)>=0?'rgba(29,89,56,.65)':'rgba(199,30,29,.65)'),stack:'d'},
+    {label:'Amortización Deuda',data:YY.map(y=>-g('amort_deuda',y)/M),backgroundColor:'rgba(158,117,0,.7)',stack:'d'},
+  ],true);
+
+  // Chart 4: uso de Fuentes Financieras
+  barChart('c-def-uso',YY,[
+    {label:'Cubre G negativo',data:YY.map(y=>Math.max(0,-defG(y)/M)),backgroundColor:'rgba(199,30,29,.65)',stack:'u'},
+    {label:'Amortiza deuda antigua',data:YY.map(y=>g('amort_deuda',y)/M),backgroundColor:'rgba(158,117,0,.7)',stack:'u'},
+    {label:'Acumula caja/inv.fin.',data:YY.map(y=>g('inv_financiera',y)/M),backgroundColor:'rgba(24,61,106,.6)',stack:'u'},
+    {label:'Fuentes Fin. (I)',data:YY.map(y=>gM('fuentes_fin',y)),type:'line',borderColor:C.m,fill:false,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:C.m},
+  ],true);
+
+  // Chart 5: amort vs |G|
+  barChart('c-def-am-g',YY,[
+    {label:'|G| Déficit contable',data:YY.map(y=>Math.abs(defG(y))/M),backgroundColor:'rgba(199,30,29,.55)'},
+    {label:'Amortización deuda',data:YY.map(y=>g('amort_deuda',y)/M),backgroundColor:'rgba(158,117,0,.7)'},
+  ]);
+
+  // Tabla cierre
+  const rows=[
+    {l:'Ingresos Corrientes (A)',fn:y=>g('ing_corrientes',y),cls:'grp'},
+    {l:'Gastos Corrientes (B)',fn:y=>g('gastos_corrientes',y),cls:'grp'},
+    {l:'Ahorro Corriente (C = A−B)',fn:y=>g('ahorro_corriente',y),cls:'accent-g'},
+    {l:'Recursos de Capital (D)',fn:y=>g('recursos_cap',y),cls:'sub'},
+    {l:'Gastos de Capital (E)',fn:y=>g('gastos_cap',y),cls:'sub'},
+    {l:'Saldo Capital (F = D−E)',fn:y=>g('recursos_cap',y)-g('gastos_cap',y),cls:'sub'},
+    {l:'① RESULTADO FIN. NETO (G = C+F)',fn:y=>g('resultado_fin',y),cls:'total'},
+    {l:'Amortización de Deuda',fn:y=>g('amort_deuda',y),cls:'sub'},
+    {l:'② DÉFICIT DE CAJA (G − Amort.)',fn:y=>defCaja(y),cls:'accent'},
+    {l:'Incremento Inv. Financiera',fn:y=>g('inv_financiera',y),cls:'sub'},
+    {l:'③ DÉFICIT BRUTO FIN. (= −I)',fn:y=>defBruto(y),cls:'accent'},
+    {l:'FUENTES FINANCIERAS (I)',fn:y=>g('fuentes_fin',y),cls:'grp'},
+    {l:'  Dis. Inv. Financiera',fn:y=>g('dis_inv_fin',y),cls:'sub2'},
+    {l:'  Préstamos Internos',fn:y=>g('prestamos_int',y),cls:'sub2'},
+    {l:'  Préstamos Externos',fn:y=>g('prestamos_ext',y),cls:'sub2'},
+    {l:'  Otros Pasivos',fn:y=>g('otros_pasivos',y),cls:'sub2'},
+    {l:'APLICACIONES FINANCIERAS (J)',fn:y=>g('aplicaciones_fin',y),cls:'grp'},
+    {l:'Financiamiento Neto (H = I−J)',fn:y=>g('fuentes_fin',y)-g('aplicaciones_fin',y),cls:'accent-g'},
+    {l:'G + H = 0 (verificación)',fn:y=>+(g('resultado_fin',y)+(g('fuentes_fin',y)-g('aplicaciones_fin',y))).toFixed(1),cls:'sub'},
+    {l:'G / IC (%)',fn:y=>+(defG(y)/g('ing_corrientes',y)*100).toFixed(1),cls:'sub',pct:true},
+    {l:'Déf. Caja / IC (%)',fn:y=>+(defCaja(y)/g('ing_corrientes',y)*100).toFixed(1),cls:'sub',pct:true},
+    {l:'Amort. / Fuentes Fin. (%)',fn:y=>+(g('amort_deuda',y)/g('fuentes_fin',y)*100).toFixed(1),cls:'sub',pct:true},
+  ];
+  const TY=[...ALL];
+  document.getElementById('t-deficit').innerHTML=
+    `<thead><tr><th>Indicador</th>${TY.map(y=>`<th>${y}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>{
+      const cells=TY.map(y=>{
+        const v=r.fn(y); const neg=v<0;
+  makeSortable('t-deficit');
+        return `<td style="${neg?'color:var(--R)':''}">${Math.abs(v)>0.005?(r.pct?fp(v,1)+'%':fp(v/M,1)):'0.0'}</td>`;
+      }).join('');
+      return `<tr class="${r.cls}"><td>${r.l}</td>${cells}</tr>`;
+    }).join('')}</tbody>`;
+}
+
+// ── ROUTING ──────────────────────────────
+const REND={resumen:rResumen,ingresos:rIngresos,tgn:rTGN,hidro:rHidro,gasto:rGasto,deuda:rDeuda,ratios:rRatios,deficit:rDeficit,tabla:rTabla};
+
+
+const PAGE_CHARTS = {
+  resumen:['c-res-stack','c-res-pie','c-res-ah','c-res-res','c-res-ij'],
+  ingresos:['c-ing-ic','c-ing-rc','c-ing-ff','c-ing-comp','c-ing-var'],
+  tgn:['c-tgn-niveles','c-tgn-pct','c-tgn-abs','c-tgn-sintgn','c-tgn-prop','c-tgn-comp100','c-tgn-detalle'],
+  hidro:['c-h-total','c-h-pct','c-h-rag','c-h-idh','c-h-iehd','c-h-comp','c-h-idh-pct'],
+  gasto:['c-g-icgc','c-g-comp','c-g-ahorro','c-g-cap','c-g-gcic','c-g-rem','c-g-transf'],
+  deuda:['c-d-fuentes','c-d-aplic','c-d-neto','c-d-caja','c-d-float','c-d-ffic','c-d-amff'],
+  ratios:['c-r-dh','c-r-dt','c-r-dtot','c-r-af','c-r-stgn','c-r-rag','c-r-ah','c-r-gcic','c-r-rem','c-r-cap','c-r-ffic','c-r-am'],
+  deficit:['c-def-tres','c-def-pct','c-def-comp','c-def-uso','c-def-am-g'],
+  tabla:[]
+};
+function destroyPageCharts(p) {
+  (PAGE_CHARTS[p]||[]).forEach(id => { if(chs[id]){chs[id].destroy();delete chs[id];} });
+}
+
+function go(p){
+  destroyPageCharts(curPg);
+  curPg=p;
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nt').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nt').forEach(el=>{if(el.getAttribute('onclick')?.includes(`'${p}'`))el.classList.add('active');});
+  history.replaceState(null,'','#'+p+(selY!=='all'?'/'+selY:''));
+  render();
+}
+function sy(y){
+  selY=y;
+  document.querySelectorAll('.yb').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.yb').forEach(b=>{const t=b.textContent.trim();if((y==='all'&&t==='Serie completa')||t===y)b.classList.add('active');});
+  history.replaceState(null,'','#'+curPg+(y!=='all'?'/'+y:''));
+  render();
+}
+
+function colorYearButtons() {
+  const vals = YY.map(y => g('resultado_fin', y));
+  const maxAbs = Math.max(...vals.map(Math.abs));
+  document.querySelectorAll('.yb').forEach(btn => {
+    const y = parseInt(btn.textContent.trim());
+    if (isNaN(y)) return;
+    if (btn.classList.contains('active')) { btn.style.borderColor=''; btn.style.color=''; return; }
+    const v = g('resultado_fin', y);
+    const alpha = (0.15 + Math.min(Math.abs(v)/maxAbs,1)*0.45).toFixed(2);
+    btn.style.borderColor = v>=0 ? 'rgba(29,89,56,'+alpha+')' : 'rgba(199,30,29,'+alpha+')';
+    btn.style.color = v>=0 ? 'rgba(29,89,56,'+(Math.min(+alpha+0.3,1)).toFixed(2)+')' : 'rgba(199,30,29,'+(Math.min(+alpha+0.3,1)).toFixed(2)+')';
+    btn.title = (v>=0?'Superávit':'Déficit')+': Bs '+fp(v/1e6,1)+' M';
+  });
+}
+
+function checkIntegrity() {
+  const errors = [];
+  YY.forEach(y => {
+    const diff = Math.abs(g('resultado_fin',y) + g('fuentes_fin',y) - g('aplicaciones_fin',y));
+    if (diff > 1e6) errors.push(y+': '+fp(diff/1e6,1)+'M');
+  });
+  const bar = document.getElementById('integrity-bar');
+  const msg = document.getElementById('integrity-msg');
+  if (!bar||!msg) return;
+  if (errors.length === 0) {
+    bar.className='integrity-bar'; bar.style.display='flex';
+    msg.textContent='Integridad verificada — identidad G+H≈0 cumple en los 12 ejercicios';
+    setTimeout(()=>{ bar.style.display='none'; }, 4000);
+  } else {
+    bar.className='integrity-bar warn'; bar.style.display='flex';
+    msg.textContent='Advertencia: '+errors.length+' ejercicio(s) no cuadran — '+errors.join(' · ');
+  }
+}
+
+function render(){if(REND[curPg])REND[curPg]();colorYearButtons();}
+
+window.addEventListener('load',()=>{
+  if(localStorage.getItem('caif-dark')==='1'){
+    document.documentElement.classList.add('dark-mode');
+    document.getElementById('darkBtn').textContent='Claro';
+    Chart.defaults.color='rgba(240,232,216,.7)';
+  }
+  const hash=location.hash.replace('#','');
+  if(hash){ const[pg,yr]=hash.split('/'); if(pg&&document.getElementById('page-'+pg)){curPg=pg;if(yr)selY=yr;} }
+  const avg=YY.reduce((a,y)=>a+g('ing_corrientes',y),0)/YY.length;
+  document.getElementById('ts1').textContent=(avg/1e9).toFixed(2);
+  const hd=hidro(2025),ic=g('ing_corrientes',2025);
+  document.getElementById('ts2').textContent=(hd/ic*100).toFixed(1)+'%';
+  document.getElementById('ts3').textContent=(g('recursos_propios',2025)/ic*100).toFixed(1)+'%';
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+curPg).classList.add('active');
+  document.querySelectorAll('.nt').forEach(el=>{if(el.getAttribute('onclick')?.includes("'"+curPg+"'"))el.classList.add('active');});
+  if(selY!=='all'){document.querySelectorAll('.yb').forEach(b=>{b.classList.remove('active');if(b.textContent.trim()===selY)b.classList.add('active');});}
+  render();
+  checkIntegrity();
+});
+</script>
+</body>
+</html>
