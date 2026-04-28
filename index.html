@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finanzas Públicas Departamentales · Bolivia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --R: #c71e1d; --Rdk: #8f1514; --Rlt: #e84948; --Rpale: #fdecea;
+  --bg: #f4efe4; --bg2: #ede6d5; --bg3: #e5dac8; --bgd: #d5c9b2;
+  --ink: #3a2a18; --ink2: #6b4e36; --mute: #8e7660; --faint: #b5a28e;
+  --oc: #c4821c; --ocdk: #6b4010; --ocpale: #fdf1cc;
+  --grn: #1d5938; --grnpale: #e2f3ea; --grndk: #0d2818;
+  --blu: #183d6a; --blupale: #e2ecf7;
+  --navy: #1e2530;
+  --wht: #fdfaf3;
+  --sh: 0 2px 12px rgba(58,42,24,.09);
+  --shh: 0 8px 28px rgba(58,42,24,.18);
+}
+
+body {
+  background: var(--bg);
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 56px 64px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-watermark {
+  position: absolute; right: 48px; bottom: 0;
+  display: flex; flex-direction: column; align-items: flex-end;
+  pointer-events: none; line-height: 1; user-select: none;
+}
+.hero-watermark span {
+  font-family: 'Playfair Display', serif; font-weight: 900;
+  color: rgba(255,255,255,.038); letter-spacing: -2px; display: block;
+}
+.hero-watermark .wm1 { font-size: 5.8rem; }
+.hero-watermark .wm2 { font-size: 5.8rem; }
+.hero-watermark .wm3 { font-size: 5.8rem; }
+.hero::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: var(--R);
+}
+.hero-breadcrumb {
+  font-size: .65rem; letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.4); font-weight: 600; margin-bottom: 28px;
+}
+.hero-breadcrumb span { color: var(--R); }
+.hero h1 {
+  font-family: 'Playfair Display', serif; font-size: 2.6rem;
+  font-weight: 900; color: #fff; line-height: 1.12;
+  max-width: 680px; margin-bottom: 14px;
+}
+.hero-sub {
+  font-size: .9rem; color: rgba(255,255,255,.55); font-style: italic;
+  font-family: 'Playfair Display', serif; max-width: 560px;
+  line-height: 1.6; margin-bottom: 36px;
+}
+.hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-kpi {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.11);
+  border-top: 3px solid var(--R); border-radius: 3px; padding: 12px 18px 10px;
+}
+.hero-kpi-v {
+  font-family: 'Playfair Display', serif; font-size: 1.55rem;
+  font-weight: 700; color: var(--R); line-height: 1; margin-bottom: 5px;
+}
+.hero-kpi-l { font-size: .62rem; color: rgba(255,255,255,.45); line-height: 1.5; letter-spacing: .3px; }
+.hero-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.08);
+  font-size: .62rem; color: rgba(255,255,255,.28); flex-wrap: wrap; gap: 8px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: linear-gradient(to bottom, #8f1514, #c71e1d, #8f1514);
+  padding: 0 40px;
+  display: flex; align-items: center;
+  min-height: 46px; gap: 20px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 10px rgba(143,21,20,.4);
+}
+.topbar::after {
+  content: 'Bolivia';
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', serif;
+  font-size: 3.4rem; font-weight: 900;
+  color: rgba(255,255,255,.07);
+  pointer-events: none; letter-spacing: -2px; line-height: 1;
+  white-space: nowrap;
+}
+.topbar-label {
+  font-size: .62rem; letter-spacing: 1.8px; text-transform: uppercase;
+  color: rgba(255,255,255,.75); font-weight: 600;
+  position: relative; z-index: 1;
+}
+.topbar-sep { flex: 1; }
+.search-wrap {
+  display: flex; align-items: center; gap: 8px;
+  position: relative; z-index: 1;
+}
+.search-wrap input {
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22);
+  color: #fff; border-radius: 4px; padding: 5px 10px;
+  font-size: .69rem; font-family: 'IBM Plex Sans', sans-serif;
+  width: 180px; outline: none; transition: background .2s;
+}
+.search-wrap input::placeholder { color: rgba(255,255,255,.4); }
+.search-wrap input:focus { background: rgba(255,255,255,.2); }
+
+/* ── MAIN ── */
+.main { max-width: 1400px; margin: 0 auto; padding: 36px 48px 72px; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 22px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--bg3);
+}
+.section-header .num {
+  background: var(--R); color: #fff; font-size: .59rem; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 20px;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif; font-size: 1.1rem;
+  font-weight: 700; color: var(--ink);
+}
+.section-header .note { font-size: .66rem; color: var(--mute); margin-left: auto; font-style: italic; }
+
+/* ── INSIGHT ── */
+.insight {
+  background: linear-gradient(135deg, var(--Rpale), #fff8f8);
+  border-left: 4px solid var(--R); border-radius: 0 8px 8px 0;
+  padding: 11px 16px; margin-bottom: 28px;
+  font-size: .76rem; color: var(--ink); line-height: 1.65;
+}
+.insight strong { color: var(--R); }
+
+/* ── TOOLS GRID ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+/* ── TOOL CARD ── */
+.tool-card {
+  background: var(--navy); border-radius: 10px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(30,37,48,.22);
+  display: flex; align-items: stretch; position: relative;
+}
+.tool-accent { width: 5px; flex-shrink: 0; }
+.tool-accent-r { background: var(--R); }
+.tool-accent-g { background: var(--grn); }
+.tool-body {
+  padding: 22px 24px; flex: 1;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.tool-icon {
+  width: 46px; height: 46px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0; margin-bottom: 6px;
+}
+.tool-icon-r { background: rgba(199,30,29,.18); border: 1px solid rgba(199,30,29,.28); }
+.tool-icon-g { background: rgba(29,89,56,.2); border: 1px solid rgba(29,89,56,.32); }
+.tool-tag {
+  font-size: .58rem; letter-spacing: 2px; text-transform: uppercase;
+  font-weight: 700; margin-bottom: 2px;
+}
+.tool-tag-r { color: var(--Rlt); }
+.tool-tag-g { color: #4caf82; }
+.tool-title {
+  font-family: 'Playfair Display', serif; font-size: 1.05rem;
+  font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 4px;
+}
+.tool-desc {
+  font-size: .7rem; color: rgba(255,255,255,.42); line-height: 1.65; flex: 1;
+}
+.tool-btn {
+  display: inline-flex; align-items: center; gap: 8px; color: #fff;
+  text-decoration: none; padding: 9px 20px; border-radius: 5px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .3px;
+  white-space: nowrap; transition: filter .18s, transform .18s;
+  align-self: flex-start; margin-top: 12px;
+}
+.tool-btn:hover { filter: brightness(1.18); transform: translateX(2px); }
+.tool-btn-r { background: var(--R); }
+.tool-btn-g { background: var(--grn); }
+.tool-watermark {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  font-family: 'Playfair Display', serif; font-size: 4.5rem;
+  font-weight: 900; color: rgba(255,255,255,.04);
+  pointer-events: none; letter-spacing: -3px; line-height: 1;
+}
+
+/* ── DEPARTMENTS GRID ── */
+.dept-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* ── DEPARTMENT CARD ── */
+.dept-card {
+  background: var(--wht); border-radius: 10px; overflow: hidden;
+  box-shadow: var(--sh); transition: box-shadow .22s, transform .22s;
+  position: relative; color: inherit;
+  display: flex; flex-direction: column;
+}
+.dept-card:hover { box-shadow: var(--shh); transform: translateY(-3px); }
+.dept-card-accent { height: 4px; flex-shrink: 0; }
+.card-alt .dept-card-accent { background: var(--R); }
+.card-val .dept-card-accent { background: var(--oc); }
+.card-ori .dept-card-accent { background: var(--grn); }
+
+.dept-card-body { padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; }
+.dept-card-num {
+  font-family: 'IBM Plex Mono', monospace; font-size: .58rem;
+  color: var(--faint); font-weight: 600; letter-spacing: 1px; margin-bottom: 6px;
+}
+.dept-card-name {
+  font-family: 'Playfair Display', serif; font-size: 1.18rem;
+  font-weight: 900; color: var(--ink); line-height: 1.15; margin-bottom: 2px;
+}
+.dept-card-gob { font-size: .63rem; color: var(--mute); margin-bottom: 12px; font-style: italic; }
+
+.dept-docs { display: flex; flex-direction: column; gap: 5px; margin-top: auto; }
+.dept-doc {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; background: var(--bg); border-radius: 5px;
+  text-decoration: none; transition: background .15s; cursor: pointer;
+  border: 1px solid var(--bg3);
+}
+.dept-doc:hover { background: var(--bg2); border-color: var(--bgd); }
+.dept-doc-icon {
+  width: 20px; height: 20px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .55rem; font-weight: 700; flex-shrink: 0; letter-spacing: .3px;
+}
+.icon-caif { background: var(--Rpale); color: var(--R); }
+.icon-fin  { background: var(--blupale); color: var(--blu); }
+.card-val .icon-caif { background: var(--ocpale); color: var(--oc); }
+.card-ori .icon-caif { background: var(--grnpale); color: var(--grn); }
+
+.dept-doc-info { flex: 1; min-width: 0; }
+.dept-doc-title {
+  font-size: .69rem; font-weight: 600; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dept-doc-arrow { font-size: .7rem; color: var(--faint); flex-shrink: 0; transition: color .15s, transform .15s; }
+.dept-doc:hover .dept-doc-arrow { color: var(--R); transform: translateX(2px); }
+.card-val .dept-doc:hover .dept-doc-arrow { color: var(--oc); }
+.card-ori .dept-doc:hover .dept-doc-arrow { color: var(--grn); }
+
+/* ── LEGEND ── */
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: .63rem; color: var(--mute); }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* ── SEARCH HIDE ── */
+.dept-card.hidden { display: none; }
+
+/* ── NOTA METODOLÓGICA ── */
+.nota {
+  background: linear-gradient(135deg, var(--ocpale), #fffef7);
+  border: 1px solid var(--ocpale); border-left: 4px solid var(--oc);
+  border-radius: 0 8px 8px 0; padding: 14px 18px;
+  font-size: .76rem; color: var(--ink); line-height: 1.75; max-width: 900px;
+}
+.nota strong { color: var(--ocdk); }
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--navy); color: rgba(255,255,255,.3);
+  text-align: center; padding: 16px 40px 18px;
+  font-size: .62rem; letter-spacing: .5px; line-height: 1.9;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .dept-grid { grid-template-columns: repeat(2, 1fr); }
+  .tools-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .dept-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .hero { padding: 36px 24px 32px; }
+  .hero h1 { font-size: 1.8rem; }
+  .main { padding: 24px 18px 48px; }
+  .topbar { padding: 0 18px; }
+  .tool-watermark { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-breadcrumb">
+    POLÍTICA FISCAL · DESCENTRALIZACIÓN · <span>BOLIVIA 2014–2025</span>
+  </div>
+  <h1>Finanzas Públicas Departamentales</h1>
+  <p class="hero-sub">
+    Análisis ejecutado del SIGEP · Cuenta Ahorro-Inversión-Financiamiento ·
+    Financiamiento departamental · Recursos naturales · Autonomía fiscal
+  </p>
+  <div class="hero-meta">
+    <div class="hero-kpi">
+      <div class="hero-kpi-v">9</div>
+      <div class="hero-kpi-l">Departamentos analizados</div>
+    </div>
+    <div class="hero-kpi">
+      <div class="hero-kpi-v">12</div>
+      <div class="hero-kpi-l">Gestiones · 2014–2025</div>
+    </div>
+    <div class="hero-kpi">
+      <div class="hero-kpi-v">SIGEP</div>
+      <div class="hero-kpi-l">Cifras ejecutadas · datos verificables</div>
+    </div>
+    <div class="hero-kpi">
+      <div class="hero-kpi-v">CAIF</div>
+      <div class="hero-kpi-l">Cuenta Ahorro · Inversión · Financiamiento</div>
+    </div>
+  </div>
+  <div class="hero-footer">
+    <span>Centro de Estudios POPULI · UPSA · Concejo Consultivo Técnico Departamental (CCTD)</span>
+    <span>Fuentes: SIGEP · SIN · INE · Ley 1551 · Ley 031</span>
+    <span>Bolivia · Abril 2026</span>
+  </div>
+  <div class="hero-watermark" aria-hidden="true">
+    <span class="wm1">POPULI</span>
+    <span class="wm2">UPSA</span>
+    <span class="wm3">CCTD</span>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="topbar-label">Observatorio · Finanzas Públicas Departamentales</span>
+  <div class="topbar-sep"></div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Buscar departamento..." oninput="filterDepts(this.value)">
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="insight">
+    Selecciona cualquier departamento para acceder a su dashboard interactivo o informe analítico.
+    Todos los datos corresponden a cifras <strong>ejecutadas</strong> del SIGEP —no presupuestadas—,
+    garantizando que el análisis refleje hechos verificables, no intenciones institucionales.
+  </div>
+
+  <!-- ── HERRAMIENTAS COMPARATIVAS ── -->
+  <div class="section-header">
+    <span class="num" style="background:var(--grn)">01</span>
+    <h2>Herramientas comparativas</h2>
+    <span class="note">Análisis transversal · 9 departamentos</span>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- MAPA COROPLÉTICO -->
+    <div class="tool-card">
+      <div class="tool-accent tool-accent-g"></div>
+      <div class="tool-body">
+        <div class="tool-icon tool-icon-g">🗺</div>
+        <div class="tool-tag tool-tag-g">Mapa coroplético · POPULI</div>
+        <div class="tool-title">Mapa Comparativo CAIF · Bolivia</div>
+        <div class="tool-desc">
+          Visualiza y compara 33 indicadores fiscales sobre el mapa de Bolivia.
+          Selecciona el indicador y la gestión de interés. Incluye ranking interactivo,
+          sparklines por departamento y escala cromática coherente con el desempeño fiscal.
+        </div>
+        <a class="tool-btn tool-btn-g" href="GOB_Mapa_CAIF_9Departamentos.html" target="_blank">
+          Abrir mapa &nbsp;→
+        </a>
+      </div>
+      <div class="tool-watermark">MAPA</div>
+    </div>
+
+    <!-- SIMULADOR 50/50 -->
+    <div class="tool-card">
+      <div class="tool-accent tool-accent-r"></div>
+      <div class="tool-body">
+        <div class="tool-icon tool-icon-r">⚖</div>
+        <div class="tool-tag tool-tag-r">Simulador interactivo · POPULI</div>
+        <div class="tool-title">Coparticipación Tributaria y Reforma 50/50</div>
+        <div class="tool-desc">
+          Simula el impacto de la reforma de coparticipación tributaria bajo el principio 50/50
+          sobre los ingresos departamentales. Explora escenarios, ajusta parámetros y visualiza
+          la redistribución fiscal entre los 9 departamentos de Bolivia.
+        </div>
+        <a class="tool-btn tool-btn-r" href="POPULI_Simulador_Coparticipacion_5050.html" target="_blank">
+          Abrir simulador &nbsp;→
+        </a>
+      </div>
+      <div class="tool-watermark">50/50</div>
+    </div>
+
+  </div>
+
+  <!-- ── DEPARTAMENTOS ── -->
+  <div class="section-header">
+    <span class="num">02</span>
+    <h2>Departamentos · Bolivia</h2>
+    <span class="note">9 departamentos · 2014–2025</span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--Rpale);border:1px solid var(--R)"></div>
+      <span>Dashboard CAIF</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--blupale);border:1px solid var(--blu)"></div>
+      <span>Informe Financiamiento</span>
+    </div>
+  </div>
+
+  <div class="dept-grid" id="deptGrid">
+
+    <!-- LA PAZ -->
+    <div class="dept-card card-alt" data-dept="lapaz">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0902</div>
+        <div class="dept-card-name">La Paz</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de La Paz · GADLP</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0902_LaPaz_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_LaPaz_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORURO -->
+    <div class="dept-card card-alt" data-dept="oruro">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0904</div>
+        <div class="dept-card-name">Oruro</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Oruro · GADORU</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0904_Oruro_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Oruro_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- POTOSÍ -->
+    <div class="dept-card card-alt" data-dept="potosi">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0905</div>
+        <div class="dept-card-name">Potosí</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Potosí · GADP</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0905_Potosi_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Potosi_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHUQUISACA -->
+    <div class="dept-card card-val" data-dept="chuquisaca">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0901</div>
+        <div class="dept-card-name">Chuquisaca</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Chuquisaca · GADC</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0901_Chuquisaca_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Chuquisaca_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- COCHABAMBA -->
+    <div class="dept-card card-val" data-dept="cochabamba">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0903</div>
+        <div class="dept-card-name">Cochabamba</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Cochabamba · GADCBBA</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0903_Cochabamba_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Cochabamba_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARIJA -->
+    <div class="dept-card card-val" data-dept="tarija">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0906</div>
+        <div class="dept-card-name">Tarija</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Tarija · GADT</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0906_Tarija_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Tarija_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SANTA CRUZ -->
+    <div class="dept-card card-ori" data-dept="santacruz">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0907</div>
+        <div class="dept-card-name">Santa Cruz</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Santa Cruz · GADSC</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0907_SantaCruz_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_SantaCruz_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BENI -->
+    <div class="dept-card card-ori" data-dept="beni">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0908</div>
+        <div class="dept-card-name">Beni</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental del Beni · GADB</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0908_Beni_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Beni_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANDO -->
+    <div class="dept-card card-ori" data-dept="pando">
+      <div class="dept-card-accent"></div>
+      <div class="dept-card-body">
+        <div class="dept-card-num">GOB · 0909</div>
+        <div class="dept-card-name">Pando</div>
+        <div class="dept-card-gob">Gobierno Autónomo Departamental de Pando · GADPDO</div>
+        <div class="dept-docs">
+          <a class="dept-doc" href="GOB_0909_Pando_CAIF_Dashboard.html" target="_blank">
+            <div class="dept-doc-icon icon-caif">CAIF</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Dashboard CAIF · 2014–2025</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+          <a class="dept-doc" href="POPULI_Pando_FinanciamientoDepartamental_2025.pdf" target="_blank">
+            <div class="dept-doc-icon icon-fin">FIN</div>
+            <div class="dept-doc-info">
+              <div class="dept-doc-title">Informe Financiamiento Municipal y 50/50</div>
+            </div>
+            <span class="dept-doc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dept-grid -->
+
+  <!-- NOTA METODOLÓGICA -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="num" style="background:var(--oc)">▲</span>
+    <h2 style="font-size:.95rem">Nota metodológica</h2>
+  </div>
+  <div class="nota">
+    Todos los documentos trabajan exclusivamente con <strong>cifras ejecutadas</strong> del Sistema de Gestión Pública (SIGEP).
+    No se utiliza información presupuestada. La distinción es técnicamente fundamental: en Bolivia los presupuestos aprobados y la ejecución real divergen de forma recurrente y significativa.
+    Trabajar sobre ejecutados garantiza que el análisis refleje <strong>hechos verificables</strong>, no intenciones institucionales.
+    Fuentes complementarias: SIN · INE · Ley 1551 · Ley 031.
+  </div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  Centro de Estudios POPULI &nbsp;·&nbsp; Universidad Privada de Santa Cruz de la Sierra (UPSA) &nbsp;·&nbsp; Concejo Consultivo Técnico Departamental (CCTD)
+  <br style="margin-bottom:4px">
+  Bolivia · Abril 2026 &nbsp;·&nbsp; Fuentes: SIGEP · SIN · INE · Ley 1551 · Ley 031
+</div>
+
+<script>
+function filterDepts(val) {
+  const q = val.toLowerCase().trim();
+  document.querySelectorAll('.dept-card').forEach(card => {
+    const name = card.dataset.dept || '';
+    const text = card.innerText.toLowerCase();
+    if (!q || text.includes(q) || name.includes(q)) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
+</body>
+</html>
