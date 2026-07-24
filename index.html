@@ -46,8 +46,8 @@ body{background:var(--paper);font-family:var(--f);color:var(--ink);min-height:10
   padding:0 clamp(16px,4vw,40px);min-height:44px;
   box-shadow:0 1px 0 rgba(0,0,0,.15),0 6px 18px rgba(120,60,10,.22);
 }
-.mast-mark{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);flex-shrink:0;position:relative}
-.mast-mark::after{content:'';position:absolute;inset:4px;border-radius:50%;background:rgba(255,255,255,.55)}
+.mast-mark{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center}
+.mast-mark svg{width:30px;height:30px;display:block}
 .mast b{color:#fff;font-weight:700;font-size:.82rem;letter-spacing:.2px}
 .mast b span{color:rgba(255,255,255,.66);font-weight:500}
 .mast-sep{flex:1}
@@ -167,7 +167,7 @@ body{background:var(--paper);font-family:var(--f);color:var(--ink);min-height:10
 
 <!-- MASTHEAD -->
 <div class="mast">
-  <div class="mast-mark"></div>
+  <div class="mast-mark" title="Observatorio de Finanzas Públicas y Desarrollo Territorial"><svg viewBox="0 0 200 200" aria-hidden="true"><polygon points="100,10 155,35 191,84 173,142 130,183 69,185 26,143 10,84 45,35" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="6" stroke-linejoin="round"/><polygon points="122,33 156,65 171,110 145,150 102,169 56,156 35,114 36,66 75,39" fill="none" stroke="rgba(255,255,255,.62)" stroke-width="5" stroke-linejoin="round"/><polygon points="129,60 146,89 147,123 120,144 86,148 58,129 52,95 64,63 97,53" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="4" stroke-linejoin="round"/><polygon points="124,82 128,102 122,122 103,128 83,125 71,108 74,89 86,72 107,73" fill="none" stroke="rgba(255,255,255,.26)" stroke-width="3" stroke-linejoin="round"/></svg></div>
   <b>Bolivia: <span>Finanzas Públicas Departamentales</span></b>
   <div class="mast-sep"></div>
   <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema">☾</button>
