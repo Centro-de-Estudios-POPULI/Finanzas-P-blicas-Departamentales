@@ -160,12 +160,12 @@ body.dark .ind.on .mini{opacity:1;filter:none}
 .sr-svg{display:block;width:100%;height:auto;overflow:visible;cursor:pointer;touch-action:pan-y}
 .sr-svg .gl{stroke:var(--linea-2);stroke-width:1}
 .sr-svg .base{stroke:var(--faint);stroke-width:1.1;opacity:.75}
-.sr-svg .bar{fill:var(--sel);opacity:.82}
+.sr-svg .bar{fill:var(--sel);opacity:.68}
 .sr-svg .bar.now{fill:var(--warm);opacity:1}
 .sr-svg .bar.hov{opacity:1}
-.sr-svg .ln-na{fill:none;stroke:var(--faint);stroke-width:1.7;stroke-dasharray:4 2.6;stroke-linecap:round}
-.sr-svg .dot-na{fill:var(--faint)}
-.sr-svg .ax{fill:var(--faint);font-size:7.6px;font-weight:600;font-family:var(--f)}
+.sr-svg .ln-na{fill:none;stroke:var(--suave);stroke-width:1.9;stroke-dasharray:4 2.6;stroke-linecap:round}
+.sr-svg .dot-na{fill:var(--suave)}
+.sr-svg .ax{fill:var(--faint);font-size:7px;font-weight:600;font-family:var(--f)}
 /* halo del color de la tarjeta: los rótulos del eje y se alinean con el título (x=0) y pisan la barra sin ensuciarse */
 .sr-svg .ay{fill:var(--suave);font-size:7.8px;font-weight:700;font-family:var(--f);
   paint-order:stroke;stroke:var(--card-solid);stroke-width:2.6px;stroke-linejoin:round}
@@ -242,8 +242,8 @@ body.dark .ind.on .mini{opacity:1;filter:none}
   body.sheet-open .termo{opacity:0;pointer-events:none}
   .tm-t{font-size:.7rem}.tm-t small{font-size:.54rem}.tm-st{display:none}.tm-side{font-size:.6rem}
   .tm-bar{height:10px}
-  .zc{right:8px;bottom:12px;transition:bottom .28s cubic-bezier(.22,.61,.36,1)}
-  body.sheet-open .zc{bottom:calc(var(--peek) + 16px)}
+  .zc{right:8px;top:210px;bottom:auto;transition:none;background:var(--card-solid);z-index:12}
+  body.sheet-open .zc{top:210px;bottom:auto}
   /* ── ficha municipal = bottom-sheet deslizable (peek / full) ── */
   /* altura = 74vh (JS la fija en px exactos) para que el detent "full" quepa ENTERO en pantalla:
      antes medía 88vh y bajaba 26vh -> la cola de la lista quedaba fuera de la pantalla y se cortaba */
@@ -564,7 +564,7 @@ Promise.all([fetch("dept_geo_web.json").then(r=>r.json()),fetch("sudamerica.topo
   // sig=null -> resumen nacional: la serie nacional pasa a ser la línea principal.
   // SR_L = banda izquierda reservada a los rótulos del eje y (para que las barras no los pisen)
   // SR_B alto = espacio para los años COMPLETOS en diagonal
-  const SR_W=262,SR_H=158,SR_T=15,SR_B=30,SR_L=23,SR_R=7;
+  const SR_W=262,SR_H=150,SR_T=15,SR_B=22,SR_L=23,SR_R=7;
   const ok=v=>v!=null&&!isNaN(v);
   function linePath(arr,x,y){let d="",pen=false;
     arr.forEach((v,i)=>{if(!ok(v)){pen=false;return;}
@@ -604,7 +604,7 @@ Promise.all([fetch("dept_geo_web.json").then(r=>r.json()),fetch("sudamerica.topo
     // años COMPLETOS en diagonal ascendente hacia la derecha (rotar -40° con ancla al final:
     // el texto queda debajo-izquierda de su barra y nunca se sale por el borde derecho)
     const yAx=SR_H-SR_B+11;
-    YEARS.forEach((yy,i)=>{g+=`<text class="ax${i===yIdx?' now':''}" x="${xc(i).toFixed(1)}" y="${yAx}" text-anchor="end" transform="rotate(-40 ${xc(i).toFixed(1)} ${yAx})">${yy}</text>`;});
+    YEARS.forEach((yy,i)=>{g+=`<text class="ax${i===yIdx?' now':''}" x="${xc(i).toFixed(1)}" y="${yAx}" text-anchor="middle">${yy}</text>`;});
     // zonas sensibles para señalar/elegir gestión
     YEARS.forEach((_,i)=>{g+=`<rect class="hit" data-i="${i}" x="${(xc(i)-bw/2).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${SR_H}"/>`;});
     const huecos=prim.filter(v=>!ok(v)).length;
