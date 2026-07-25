@@ -176,7 +176,7 @@ main {
   letter-spacing: 1.2px;
   text-transform: uppercase;
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: 0;
   flex-shrink: 0;
 }
 .sec h2 {
@@ -202,7 +202,7 @@ main {
 }
 .kpi {
   background: var(--wht);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 14px 16px 12px;
   border-left: 4px solid var(--bg3);
   box-shadow: var(--sh);
@@ -239,7 +239,7 @@ main {
 /* ── CARD ── */
 .card {
   background: var(--wht);
-  border-radius: 9px;
+  border-radius: 0;
   padding: 22px 24px;
   box-shadow: var(--sh);
   margin-bottom: 20px;
@@ -267,7 +267,7 @@ main {
 .tbl-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border-radius: 6px;
+  border-radius: 0;
   max-width: 100%;
   display: block;
 }
@@ -311,10 +311,10 @@ main {
 
 /* bar inside table */
 .bar-wrap { display: flex; align-items: center; gap: 8px; }
-.bar-bg { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; min-width: 40px; }
-.bar-fill { height: 100%; border-radius: 2px; }
+.bar-bg { flex: 1; height: 4px; background: var(--bg3); border-radius: 0; min-width: 40px; }
+.bar-fill { height: 100%; border-radius: 0; }
 .bar-in { display: flex; align-items: center; gap: 6px; }
-.bar-in-fill { height: 4px; background: var(--R); opacity: .45; min-width: 2px; border-radius: 2px; }
+.bar-in-fill { height: 4px; background: var(--R); opacity: .45; min-width: 2px; border-radius: 0; }
 
 /* ── RANK BADGE ── */
 .rank {
@@ -325,7 +325,7 @@ main {
   font-size: .58rem;
   font-weight: 700;
   color: var(--mute);
-  border-radius: 3px;
+  border-radius: 0;
   margin-right: 4px;
   flex-shrink: 0;
 }
@@ -335,7 +335,7 @@ main {
 .split-bar {
   display: flex;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 0;
   border: 1px solid var(--bgd);
 }
 .seg {
@@ -381,7 +381,7 @@ main {
   box-shadow: var(--shh);
   white-space: nowrap;
   border-left: 3px solid var(--R);
-  border-radius: 0 5px 5px 0;
+  border-radius: 0;
   z-index: 100;
   bottom: calc(100% + 8px);
   font-family: 'IBM Plex Mono', monospace;
@@ -390,12 +390,12 @@ main {
 /* ── LEGEND ── */
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; }
 .legend-item { display: flex; align-items: center; gap: 7px; font-size: .68rem; color: var(--ink2); }
-.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.legend-dot { width: 10px; height: 10px; border-radius: 0; flex-shrink: 0; }
 
 /* ── SIMULATOR PANEL ── */
 .sim-panel {
   background: var(--wht);
-  border-radius: 9px;
+  border-radius: 0;
   border-left: 4px solid var(--R);
   padding: 24px;
   margin-bottom: 20px;
@@ -414,7 +414,7 @@ main {
 .slider-hero {
   background: var(--bg);
   border: 1px solid var(--bg3);
-  border-radius: 7px;
+  border-radius: 0;
   padding: 18px;
   margin-bottom: 12px;
 }
@@ -429,7 +429,7 @@ main {
   align-items: center;
   gap: 6px;
 }
-.sh-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.sh-dot { width: 8px; height: 8px; border-radius: 0; flex-shrink: 0; }
 .sh-val {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 2.2rem;
@@ -452,7 +452,7 @@ input[type=range] {
   background: var(--bg3);
   outline: none;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 0;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -473,7 +473,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 .slider-derived {
   background: var(--bg2);
-  border-radius: 7px;
+  border-radius: 0;
   padding: 15px 18px;
   margin-bottom: 12px;
 }
@@ -503,8 +503,8 @@ input[type=range]::-webkit-slider-thumb {
   margin-bottom: 8px;
   transition: all .2s;
 }
-.fondo-prog { height: 4px; background: var(--bgd); border-radius: 2px; }
-.fondo-prog-fill { height: 100%; background: var(--brown2); border-radius: 2px; transition: width .3s; }
+.fondo-prog { height: 4px; background: var(--bgd); border-radius: 0; }
+.fondo-prog-fill { height: 100%; background: var(--brown2); border-radius: 0; transition: width .3s; }
 .fondo-prog-label { font-size: .58rem; color: var(--faint); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
 
 .fijos {
@@ -543,7 +543,7 @@ input[type=range]::-webkit-slider-thumb {
 .pcap-box {
   background: var(--bg);
   border: 1px solid var(--bg3);
-  border-radius: 7px;
+  border-radius: 0;
   padding: 18px;
   margin-top: 14px;
 }
@@ -586,7 +586,7 @@ input[type=range]::-webkit-slider-thumb {
 .insight {
   background: linear-gradient(135deg, var(--Rpale), #fff8f8);
   border-left: 4px solid var(--R);
-  border-radius: 0 8px 8px 0;
+  border-radius: 0;
   padding: 11px 16px;
   font-size: .75rem;
   color: var(--ink);
@@ -866,15 +866,15 @@ html, body {
       <div class="fijos">
         <div class="fijos-title">Fijos por normativa</div>
         <div class="fijo-row">
-          <span><span style="display:inline-block;width:8px;height:8px;background:var(--brown);border-radius:1px;margin-right:5px;vertical-align:middle"></span>TGN</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--brown);border-radius: 0;margin-right:5px;vertical-align:middle"></span>TGN</span>
           <span class="fijo-val">50,000% · Bs 24.217 MM</span>
         </div>
         <div class="fijo-row">
-          <span><span style="display:inline-block;width:8px;height:8px;background:var(--R);border-radius:1px;margin-right:5px;vertical-align:middle"></span>Municipios</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--R);border-radius: 0;margin-right:5px;vertical-align:middle"></span>Municipios</span>
           <span class="fijo-val">20,000% · Bs 9.687 MM</span>
         </div>
         <div class="fijo-row">
-          <span><span style="display:inline-block;width:8px;height:8px;background:#9B3030;border-radius:1px;margin-right:5px;vertical-align:middle"></span>Universidades</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:#9B3030;border-radius: 0;margin-right:5px;vertical-align:middle"></span>Universidades</span>
           <span class="fijo-val">5,355% · Bs 2.594 MM</span>
         </div>
       </div>
